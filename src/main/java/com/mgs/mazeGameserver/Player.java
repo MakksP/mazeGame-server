@@ -6,13 +6,15 @@ public class Player {
     private int storedPoints;
     private int number;
     private int deaths;
+    private String name;
     
-    public Player(Cords cords, int playerNumber){
+    public Player(Cords cords, int playerNumber, String nick){
         this.playerCords = cords;
         points = 0;
         storedPoints = 0;
         number = playerNumber;
         deaths = 0;
+        name = nick;
     }
 
     public Cords getPlayerCords() {
@@ -53,5 +55,9 @@ public class Player {
 
     public void setStoredPoints(int storedPoints) {
         this.storedPoints = storedPoints;
+    }
+
+    public String getName() {
+        return name;
     }
 }
