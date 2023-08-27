@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MazeGameServerApplication {
 
 	public static void main(String[] args) {
+		GameMap.getInstance();
 		SpringApplication.run(MazeGameServerApplication.class, args);
 	}
 

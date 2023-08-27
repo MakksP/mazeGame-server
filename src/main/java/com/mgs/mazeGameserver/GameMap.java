@@ -11,10 +11,12 @@ public class GameMap {
     private GameMap(){
         mapRepresentation = new ArrayList<>();
         int mapRepresentationRowCounter = 0;
+        mapRepresentation.add(new ArrayList<>());
         for (int mazeElement = 0; mazeElement < RawMaze.maze.length(); mazeElement++){
             char currentElement = RawMaze.maze.charAt(mazeElement);
             if (currentElement == '\n'){
                 mapRepresentation.add(new ArrayList<>());
+                mapRepresentationRowCounter++;
             } else {
                 mapRepresentation.get(mapRepresentationRowCounter).add(currentElement);
             }
