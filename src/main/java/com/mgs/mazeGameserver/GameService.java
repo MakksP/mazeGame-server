@@ -22,9 +22,9 @@ public class GameService {
         return new Cords(x, y);
     }
 
-    public static List<List<Character>> getVisibleAreaByPlayerId(int playerNumber){
+    public static List<List<VisibleAreaMapPoint>> getVisibleAreaByPlayerId(int playerNumber){
         List<List<Character>> wholeMapRepresentation = Game.getMapRepresentation();
-        List<List<Character>> mapVisibleAreaRepresentation = new ArrayList<>();
+        List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation = new ArrayList<>();
         Player currentPlayer = getPlayerById(playerNumber);
         int currentXMapPosition = getFirstXOfVisibleArea(currentPlayer.getPlayerCords().getX());
         int currentYMapPosition = getFirstYOfVisibleArea(currentPlayer.getPlayerCords().getY());
@@ -34,15 +34,19 @@ public class GameService {
         return mapVisibleAreaRepresentation;
     }
 
-    private static void createPlayerArea(List<List<Character>> wholeMapRepresentation, List<List<Character>> mapVisibleAreaRepresentation, int currentXMapPosition, int currentYMapPosition, int rowCounter, int maxVisibleY) {
+    private static void createPlayerArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation, int currentXMapPosition, int currentYMapPosition, int rowCounter, int maxVisibleY) {
         for (; currentYMapPosition < maxVisibleY; currentYMapPosition++){
             mapVisibleAreaRepresentation.add(new ArrayList<>());
             int maxVisibleX = getMaxVisibleX(currentXMapPosition);
             for (int tempXPosition = currentXMapPosition; tempXPosition < maxVisibleX; tempXPosition++){
-                mapVisibleAreaRepresentation.get(rowCounter).add(wholeMapRepresentation.get(currentYMapPosition).get(tempXPosition));
+                mapVisibleAreaRepresentation.get(rowCounter).add(getCurrentMapElement(wholeMapRepresentation, currentYMapPosition, tempXPosition));
             }
             rowCounter++;
         }
+    }
+
+    private static VisibleAreaMapPoint getCurrentMapElement(List<List<Character>> wholeMapRepresentation, int currentYMapPosition, int tempXPosition) {
+        return new VisibleAreaMapPoint(new Cords(tempXPosition, currentYMapPosition), wholeMapRepresentation.get(currentYMapPosition).get(tempXPosition));
     }
 
     private static int getMaxVisibleX(int currentXMapPosition) {
