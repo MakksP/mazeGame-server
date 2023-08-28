@@ -10,6 +10,14 @@ public class GameService {
     public static Cords getRandomCords(){
         int x = (int) (Math.random() * (MAP_HEIGHT - 1));
         int y = (int) (Math.random() * (MAP_WIDTH - 1));
+        while (locationIsBusy(x, y)){
+            x = (int) (Math.random() * (MAP_HEIGHT - 1));
+            y = (int) (Math.random() * (MAP_WIDTH - 1));
+        }
         return new Cords(x, y);
+    }
+
+    private static boolean locationIsBusy(int x, int y) {
+        return Game.getMapRepresentation().get(x).get(y) != '#';
     }
 }
