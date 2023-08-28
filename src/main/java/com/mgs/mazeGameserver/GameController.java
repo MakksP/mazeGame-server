@@ -24,6 +24,26 @@ public class GameController {
         return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
     }
 
+    @PostMapping("/move/up/{playerNumber}")
+    public static void movePlayerUp(@PathVariable int playerNumber){
+
+    }
+
+    @PostMapping("/move/right/{playerNumber}")
+    public static void movePlayerRight(@PathVariable int playerNumber){
+
+    }
+
+    @PostMapping("/move/down/{playerNumber}")
+    public static void movePlayerDown(@PathVariable int playerNumber){
+
+    }
+
+    @PostMapping("/move/left/{playerNumber}")
+    public static void movePlayerLeft(@PathVariable int playerNumber){
+
+    }
+
     private static void addPlayerToMap(Player connectingPlayer, Cords connectingPlayerCords) {
         Game.getMapRepresentation().get(connectingPlayerCords.getY()).set(connectingPlayerCords.getX(), Character.forDigit(connectingPlayer.getNumber(), 10));
     }
