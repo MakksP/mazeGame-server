@@ -91,6 +91,6 @@ public class GameService {
     }
 
     private static boolean locationIsBusy(int x, int y) {
-        return Game.getMapRepresentation().get(y).get(x) != '#';
+        return Game.getMapRepresentation().get(y).get(x) != ' ';
     }
 }
