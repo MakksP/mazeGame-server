@@ -9,6 +9,10 @@ public class Cords {
         this.y = y;
     }
 
+    public Cords(){
+
+    }
+
     public int getX() {
         return x;
     }
