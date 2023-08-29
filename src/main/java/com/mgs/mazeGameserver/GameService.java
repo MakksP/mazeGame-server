@@ -54,8 +54,8 @@ public class GameService {
         }
     }
 
-    private static VisibleAreaMapPoint getCurrentMapElement(List<List<Character>> wholeMapRepresentation, int currentYMapPosition, int tempXPosition) {
-        return new VisibleAreaMapPoint(new Cords(tempXPosition, currentYMapPosition), wholeMapRepresentation.get(currentYMapPosition).get(tempXPosition));
+    private static VisibleAreaMapPoint getCurrentMapElement(List<List<Character>> wholeMapRepresentation, int yMapPosition, int xMapPosition) {
+        return new VisibleAreaMapPoint(new Cords(xMapPosition, yMapPosition), wholeMapRepresentation.get(yMapPosition).get(xMapPosition));
     }
 
     private static int getMaxVisibleX(int currentXMapPosition) {
@@ -90,13 +90,17 @@ public class GameService {
         return currentXMapPosition;
     }
 
-    private static Player getPlayerById(int playerNumber) {
+    public static Player getPlayerById(int playerNumber) {
         for (Player player : Game.getPlayerList()){
             if (player.getNumber() == playerNumber){
                 return player;
             }
         }
         return null;
+    }
+
+    public static void clearPlayerFromMap(Cords movingPlayerCords) {
+        Game.getMapRepresentation().get(movingPlayerCords.getY()).set(movingPlayerCords.getX(), ' ');
     }
 
     private static boolean locationIsBusy(int x, int y) {
