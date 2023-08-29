@@ -9,8 +9,8 @@ import java.util.List;
 public class GameService {
     public static final int VISIBILITY_LENGHT = 3;
     public static final int MAX_X_Y_IN_AREA = 7;
-    public static int MAP_HEIGHT = 36;
-    public static int MAP_WIDTH = 76;
+    public static int MAP_HEIGHT = 35;
+    public static int MAP_WIDTH = 49;
 
     public static Cords getRandomCords(){
         int x = (int) (Math.random() * (MAP_WIDTH - 1));
@@ -42,6 +42,15 @@ public class GameService {
                 mapVisibleAreaRepresentation.get(rowCounter).add(getCurrentMapElement(wholeMapRepresentation, currentYMapPosition, tempXPosition));
             }
             rowCounter++;
+        }
+    }
+
+    private static void createWholeMapArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation){
+        for (int rowIndex = 0; rowIndex < MAP_HEIGHT; rowIndex++) {
+            mapVisibleAreaRepresentation.add(new ArrayList<>());
+            for (int columnIndex = 0; columnIndex < MAP_WIDTH; columnIndex++) {
+                mapVisibleAreaRepresentation.get(rowIndex).add(getCurrentMapElement(wholeMapRepresentation, rowIndex, columnIndex));
+            }
         }
     }
 
