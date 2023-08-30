@@ -22,6 +22,13 @@ public class GameController {
         return connectingPlayer.getNumber();
     }
 
+    @PostMapping("/leaveGame/{playerNumber}")
+    public static void leaveGame(@PathVariable int playerNumber){
+        joinLock.lock();
+        Game.deletePlayerById(playerNumber);
+        joinLock.unlock();
+    }
+
     @GetMapping("/getVisibleArea/{playerNumber}")
     public static GameInfoPacket getVisibleArea(@PathVariable int playerNumber){
         return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
@@ -30,13 +37,13 @@ public class GameController {
     @PostMapping("/move/up/{playerNumber}")
     public static void movePlayerUp(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = GameService.getPlayerById(playerNumber);
+        Player movingPlayer = Game.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoUp(movingPlayerCords) || elementAboveIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        GameService.clearPlayerFromMap(movingPlayerCords);
+        Game.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setY(movingPlayerCords.getY() - 1);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
@@ -46,13 +53,13 @@ public class GameController {
     @PostMapping("/move/right/{playerNumber}")
     public static void movePlayerRight(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = GameService.getPlayerById(playerNumber);
+        Player movingPlayer = Game.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoRight(movingPlayerCords) || elementOnRightIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        GameService.clearPlayerFromMap(movingPlayerCords);
+        Game.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setX(movingPlayerCords.getX() + 1);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
@@ -61,13 +68,13 @@ public class GameController {
     @PostMapping("/move/down/{playerNumber}")
     public static void movePlayerDown(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = GameService.getPlayerById(playerNumber);
+        Player movingPlayer = Game.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoDown(movingPlayerCords) || elementBelowIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        GameService.clearPlayerFromMap(movingPlayerCords);
+        Game.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setY(movingPlayerCords.getY() + 1);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
@@ -76,13 +83,13 @@ public class GameController {
     @PostMapping("/move/left/{playerNumber}")
     public static void movePlayerLeft(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = GameService.getPlayerById(playerNumber);
+        Player movingPlayer = Game.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoLeft(movingPlayerCords) || elementOnLeftIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        GameService.clearPlayerFromMap(movingPlayerCords);
+        Game.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setX(movingPlayerCords.getX() - 1);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();

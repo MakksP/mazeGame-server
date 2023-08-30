@@ -25,7 +25,7 @@ public class GameService {
     public static List<List<VisibleAreaMapPoint>> getVisibleAreaByPlayerId(int playerNumber){
         List<List<Character>> wholeMapRepresentation = Game.getMapRepresentation();
         List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation = new ArrayList<>();
-        Player currentPlayer = getPlayerById(playerNumber);
+        Player currentPlayer = Game.getPlayerById(playerNumber);
         int currentXMapPosition = getFirstXOfVisibleArea(currentPlayer.getPlayerCords().getX());
         int currentYMapPosition = getFirstYOfVisibleArea(currentPlayer.getPlayerCords().getY());
         int rowCounter = 0;
@@ -88,19 +88,6 @@ public class GameService {
             currentXMapPosition = 0;
         }
         return currentXMapPosition;
-    }
-
-    public static Player getPlayerById(int playerNumber) {
-        for (Player player : Game.getPlayerList()){
-            if (player.getNumber() == playerNumber){
-                return player;
-            }
-        }
-        return null;
-    }
-
-    public static void clearPlayerFromMap(Cords movingPlayerCords) {
-        Game.getMapRepresentation().get(movingPlayerCords.getY()).set(movingPlayerCords.getX(), ' ');
     }
 
     private static boolean locationIsBusy(int x, int y) {
