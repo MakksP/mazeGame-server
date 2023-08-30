@@ -5,14 +5,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 @RestController
 public class GameController {
 
+    private static final ReentrantLock joinLock = new ReentrantLock();
+
     @PostMapping("/joinGame/{name}")
     public static int joinGame(@PathVariable String name){
+        joinLock.lock();
         Player connectingPlayer = new Player(GameService.getRandomCords(), Game.getFirstFreePlayerNumber(), name);
         Game.getPlayerList().add(connectingPlayer);
         addPlayerToMap(connectingPlayer);
+        joinLock.unlock();
         return connectingPlayer.getNumber();
     }
 
@@ -23,51 +29,63 @@ public class GameController {
 
     @PostMapping("/move/up/{playerNumber}")
     public static void movePlayerUp(@PathVariable int playerNumber){
+        TurnSystem.turnLock.lock();
         Player movingPlayer = GameService.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoUp(movingPlayerCords) || elementAboveIsWall(movingPlayerCords)){
+            TurnSystem.turnLock.unlock();
             return;
         }
         GameService.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setY(movingPlayerCords.getY() - 1);
         addPlayerToMap(movingPlayer);
+        TurnSystem.turnLock.unlock();
     }
 
 
     @PostMapping("/move/right/{playerNumber}")
     public static void movePlayerRight(@PathVariable int playerNumber){
+        TurnSystem.turnLock.lock();
         Player movingPlayer = GameService.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoRight(movingPlayerCords) || elementOnRightIsWall(movingPlayerCords)){
+            TurnSystem.turnLock.unlock();
             return;
         }
         GameService.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setX(movingPlayerCords.getX() + 1);
         addPlayerToMap(movingPlayer);
+        TurnSystem.turnLock.unlock();
     }
 
     @PostMapping("/move/down/{playerNumber}")
     public static void movePlayerDown(@PathVariable int playerNumber){
+        TurnSystem.turnLock.lock();
         Player movingPlayer = GameService.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoDown(movingPlayerCords) || elementBelowIsWall(movingPlayerCords)){
+            TurnSystem.turnLock.unlock();
             return;
         }
         GameService.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setY(movingPlayerCords.getY() + 1);
         addPlayerToMap(movingPlayer);
+        TurnSystem.turnLock.unlock();
     }
 
     @PostMapping("/move/left/{playerNumber}")
     public static void movePlayerLeft(@PathVariable int playerNumber){
+        TurnSystem.turnLock.lock();
         Player movingPlayer = GameService.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
         if (cordsOutOfBoundsAfterGoLeft(movingPlayerCords) || elementOnLeftIsWall(movingPlayerCords)){
+            TurnSystem.turnLock.unlock();
             return;
         }
         GameService.clearPlayerFromMap(movingPlayerCords);
         movingPlayerCords.setX(movingPlayerCords.getX() - 1);
         addPlayerToMap(movingPlayer);
+        TurnSystem.turnLock.unlock();
     }
 
     private static boolean elementOnRightIsWall(Cords movingPlayerCords) {
