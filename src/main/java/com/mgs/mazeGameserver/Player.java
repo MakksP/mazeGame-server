@@ -7,6 +7,7 @@ public class Player {
     public int number;
     public int deaths;
     public String name;
+    public char standsOn;
     
     public Player(Cords cords, int playerNumber, String nick){
         this.playerCords = cords;
@@ -15,6 +16,7 @@ public class Player {
         number = playerNumber;
         deaths = 0;
         name = nick;
+        standsOn = ' ';
     }
 
     public Player(){

@@ -86,7 +86,7 @@ public class Game {
     public static void deletePlayerById(int playerId){
         Player playerToRemove = getPlayerById(playerId);
         Game.playerList.remove(playerToRemove);
-        clearPlayerFromMap(playerToRemove.getPlayerCords());
+        clearPlayerFromMap(playerToRemove);
     }
 
     private static int playerNumberAtTheTopOfList(List<Integer> playerNumbers) {
@@ -118,7 +118,7 @@ public class Game {
         return null;
     }
 
-    public static void clearPlayerFromMap(Cords movingPlayerCords) {
-        Game.getMapRepresentation().get(movingPlayerCords.getY()).set(movingPlayerCords.getX(), ' ');
+    public static void clearPlayerFromMap(Player player) {
+        Game.getMapRepresentation().get(player.playerCords.getY()).set(player.playerCords.getX(), player.standsOn);
     }
 }

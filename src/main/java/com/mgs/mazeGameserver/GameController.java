@@ -43,8 +43,10 @@ public class GameController {
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayerCords);
-        movingPlayerCords.setY(movingPlayerCords.getY() - 1);
+        Game.clearPlayerFromMap(movingPlayer);
+        int newPlayerY = movingPlayerCords.getY() - 1;
+        movingPlayer.standsOn = Game.getMapRepresentation().get(newPlayerY).get(movingPlayerCords.getX());
+        movingPlayerCords.setY(newPlayerY);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
@@ -59,8 +61,10 @@ public class GameController {
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayerCords);
-        movingPlayerCords.setX(movingPlayerCords.getX() + 1);
+        Game.clearPlayerFromMap(movingPlayer);
+        int newPlayerX = movingPlayerCords.getX() + 1;
+        movingPlayer.standsOn = Game.getMapRepresentation().get(movingPlayerCords.getY()).get(newPlayerX);
+        movingPlayerCords.setX(newPlayerX);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
@@ -74,7 +78,9 @@ public class GameController {
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayerCords);
+        Game.clearPlayerFromMap(movingPlayer);
+        int newPlayerY = movingPlayerCords.getY() + 1;
+        movingPlayer.standsOn = Game.getMapRepresentation().get(newPlayerY).get(movingPlayerCords.getX());
         movingPlayerCords.setY(movingPlayerCords.getY() + 1);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
@@ -89,8 +95,10 @@ public class GameController {
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayerCords);
-        movingPlayerCords.setX(movingPlayerCords.getX() - 1);
+        Game.clearPlayerFromMap(movingPlayer);
+        int newPlayerX = movingPlayerCords.getX() - 1;
+        movingPlayer.standsOn = Game.getMapRepresentation().get(movingPlayerCords.getY()).get(newPlayerX);
+        movingPlayerCords.setX(newPlayerX);
         addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
