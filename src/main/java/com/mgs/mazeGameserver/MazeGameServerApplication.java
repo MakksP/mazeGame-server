@@ -4,11 +4,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MazeGameServerApplication {
+public class MazeGameServerApplication{
 
 	public static void main(String[] args) {
 		Game.getInstance();
 		createAndRunTurnSystem();
+		Beast beast1 = new Beast();
+		Thread beastThread = new Thread(beast1);
+		beastThread.start();
 		SpringApplication.run(MazeGameServerApplication.class, args);
 	}
 

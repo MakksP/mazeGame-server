@@ -25,7 +25,7 @@ public class GameService {
     public static List<List<VisibleAreaMapPoint>> getVisibleAreaByPlayerId(int playerNumber){
         List<List<Character>> wholeMapRepresentation = Game.getMapRepresentation();
         List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation = new ArrayList<>();
-        Player currentPlayer = Game.getPlayerById(playerNumber);
+        Player currentPlayer = Player.getPlayerById(playerNumber);
         int currentXMapPosition = getFirstXOfVisibleArea(currentPlayer.getPlayerCords().getX());
         int currentYMapPosition = getFirstYOfVisibleArea(currentPlayer.getPlayerCords().getY());
         int rowCounter = 0;
@@ -45,7 +45,7 @@ public class GameService {
         }
     }
 
-    private static void createWholeMapArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation){
+    public static void createWholeMapArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation){
         for (int rowIndex = 0; rowIndex < MAP_HEIGHT; rowIndex++) {
             mapVisibleAreaRepresentation.add(new ArrayList<>());
             for (int columnIndex = 0; columnIndex < MAP_WIDTH; columnIndex++) {
@@ -92,5 +92,63 @@ public class GameService {
 
     private static boolean locationIsBusy(int x, int y) {
         return Game.getMapRepresentation().get(y).get(x) != ' ';
+    }
+
+    public static boolean elementOnRightIsWall(Cords movingElementCords) {
+        return Game.getMapRepresentation().get(movingElementCords.getY()).get(movingElementCords.getX() + 1) == '#';
+    }
+
+    public static boolean cordsOutOfBoundsAfterGoRight(Cords movingElementCords) {
+        return movingElementCords.getX() + 1 > GameService.MAP_WIDTH - 1;
+    }
+
+    public static boolean elementBelowIsWall(Cords movingElementCords) {
+        return Game.getMapRepresentation().get(movingElementCords.getY() + 1).get(movingElementCords.getX()) == '#';
+    }
+
+    public static boolean cordsOutOfBoundsAfterGoDown(Cords movingElementCords) {
+        return movingElementCords.getY() + 1 > GameService.MAP_HEIGHT - 1;
+
+    }
+
+    public static boolean elementOnLeftIsWall(Cords movingElementCords) {
+        return Game.getMapRepresentation().get(movingElementCords.getY()).get(movingElementCords.getX() - 1) == '#';
+    }
+
+    public static boolean cordsOutOfBoundsAfterGoLeft(Cords movingElementCords) {
+        return movingElementCords.getX() - 1 < 0;
+    }
+
+    public static boolean elementAboveIsWall(Cords movingElementCords) {
+        return Game.getMapRepresentation().get(movingElementCords.getY() - 1).get(movingElementCords.getX()) == '#';
+    }
+
+    public static boolean cordsOutOfBoundsAfterGoUp(Cords movingElementCords) {
+        return movingElementCords.getY() - 1 < 0;
+    }
+
+
+    public static void moveElementLeft(MovingElement element) {
+        int newPlayerX = element.cords.getX() - 1;
+        element.standsOn = Game.getMapRepresentation().get(element.cords.getY()).get(newPlayerX);
+        element.cords.setX(newPlayerX);
+    }
+
+    public static void moveElementDown(MovingElement element) {
+        int newPlayerY = element.cords.getY() + 1;
+        element.standsOn = Game.getMapRepresentation().get(newPlayerY).get(element.cords.getX());
+        element.cords.setY(element.cords.getY() + 1);
+    }
+
+    public static void moveElementRight(MovingElement element) {
+        int newPlayerX = element.cords.getX() + 1;
+        element.standsOn = Game.getMapRepresentation().get(element.cords.getY()).get(newPlayerX);
+        element.cords.setX(newPlayerX);
+    }
+
+    public static void moveElementUp(MovingElement element) {
+        int newPlayerY = element.cords.getY() - 1;
+        element.standsOn = Game.getMapRepresentation().get(newPlayerY).get(element.cords.getX());
+        element.cords.setY(newPlayerY);
     }
 }

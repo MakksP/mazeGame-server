@@ -83,12 +83,6 @@ public class Game {
         }
     }
 
-    public static void deletePlayerById(int playerId){
-        Player playerToRemove = getPlayerById(playerId);
-        Game.playerList.remove(playerToRemove);
-        clearPlayerFromMap(playerToRemove);
-    }
-
     private static int playerNumberAtTheTopOfList(List<Integer> playerNumbers) {
         return playerNumbers.get(playerNumbers.size() - 1) + 1;
     }
@@ -109,16 +103,4 @@ public class Game {
         }
     }
 
-    public static Player getPlayerById(int playerNumber) {
-        for (Player player : Game.getPlayerList()){
-            if (player.getNumber() == playerNumber){
-                return player;
-            }
-        }
-        return null;
-    }
-
-    public static void clearPlayerFromMap(Player player) {
-        Game.getMapRepresentation().get(player.playerCords.getY()).set(player.playerCords.getX(), player.standsOn);
-    }
 }

@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
@@ -17,7 +19,7 @@ public class GameController {
         joinLock.lock();
         Player connectingPlayer = new Player(GameService.getRandomCords(), Game.getFirstFreePlayerNumber(), name);
         Game.getPlayerList().add(connectingPlayer);
-        addPlayerToMap(connectingPlayer);
+        Player.addPlayerToMap(connectingPlayer);
         joinLock.unlock();
         return connectingPlayer.getNumber();
     }
@@ -25,118 +27,81 @@ public class GameController {
     @PostMapping("/leaveGame/{playerNumber}")
     public static void leaveGame(@PathVariable int playerNumber){
         joinLock.lock();
-        Game.deletePlayerById(playerNumber);
+        Player.deletePlayerById(playerNumber);
         joinLock.unlock();
     }
 
     @GetMapping("/getVisibleArea/{playerNumber}")
     public static GameInfoPacket getVisibleArea(@PathVariable int playerNumber){
-        return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
+        //return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
+        List<List<VisibleAreaMapPoint>> map = new ArrayList<>();
+        GameService.createWholeMapArea(Game.getMapRepresentation(), map);
+        return new GameInfoPacket(map, Game.getPlayerList());
     }
 
     @PostMapping("/move/up/{playerNumber}")
     public static void movePlayerUp(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = Game.getPlayerById(playerNumber);
+        Player movingPlayer = Player.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
-        if (cordsOutOfBoundsAfterGoUp(movingPlayerCords) || elementAboveIsWall(movingPlayerCords)){
+        if (GameService.cordsOutOfBoundsAfterGoUp(movingPlayerCords) || GameService.elementAboveIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayer);
-        int newPlayerY = movingPlayerCords.getY() - 1;
-        movingPlayer.standsOn = Game.getMapRepresentation().get(newPlayerY).get(movingPlayerCords.getX());
-        movingPlayerCords.setY(newPlayerY);
-        addPlayerToMap(movingPlayer);
+        Player.clearPlayerFromMap(movingPlayer);
+        GameService.moveElementUp(movingPlayer);
+        Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
+
 
 
     @PostMapping("/move/right/{playerNumber}")
     public static void movePlayerRight(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = Game.getPlayerById(playerNumber);
+        Player movingPlayer = Player.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
-        if (cordsOutOfBoundsAfterGoRight(movingPlayerCords) || elementOnRightIsWall(movingPlayerCords)){
+        if (GameService.cordsOutOfBoundsAfterGoRight(movingPlayerCords) || GameService.elementOnRightIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayer);
-        int newPlayerX = movingPlayerCords.getX() + 1;
-        movingPlayer.standsOn = Game.getMapRepresentation().get(movingPlayerCords.getY()).get(newPlayerX);
-        movingPlayerCords.setX(newPlayerX);
-        addPlayerToMap(movingPlayer);
+        Player.clearPlayerFromMap(movingPlayer);
+        GameService.moveElementRight(movingPlayer);
+        Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
+
 
     @PostMapping("/move/down/{playerNumber}")
     public static void movePlayerDown(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = Game.getPlayerById(playerNumber);
+        Player movingPlayer = Player.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
-        if (cordsOutOfBoundsAfterGoDown(movingPlayerCords) || elementBelowIsWall(movingPlayerCords)){
+        if (GameService.cordsOutOfBoundsAfterGoDown(movingPlayerCords) || GameService.elementBelowIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayer);
-        int newPlayerY = movingPlayerCords.getY() + 1;
-        movingPlayer.standsOn = Game.getMapRepresentation().get(newPlayerY).get(movingPlayerCords.getX());
-        movingPlayerCords.setY(movingPlayerCords.getY() + 1);
-        addPlayerToMap(movingPlayer);
+        Player.clearPlayerFromMap(movingPlayer);
+        GameService.moveElementDown(movingPlayer);
+        Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
+
 
     @PostMapping("/move/left/{playerNumber}")
     public static void movePlayerLeft(@PathVariable int playerNumber){
         TurnSystem.turnLock.lock();
-        Player movingPlayer = Game.getPlayerById(playerNumber);
+        Player movingPlayer = Player.getPlayerById(playerNumber);
         Cords movingPlayerCords = movingPlayer.getPlayerCords();
-        if (cordsOutOfBoundsAfterGoLeft(movingPlayerCords) || elementOnLeftIsWall(movingPlayerCords)){
+        if (GameService.cordsOutOfBoundsAfterGoLeft(movingPlayerCords) || GameService.elementOnLeftIsWall(movingPlayerCords)){
             TurnSystem.turnLock.unlock();
             return;
         }
-        Game.clearPlayerFromMap(movingPlayer);
-        int newPlayerX = movingPlayerCords.getX() - 1;
-        movingPlayer.standsOn = Game.getMapRepresentation().get(movingPlayerCords.getY()).get(newPlayerX);
-        movingPlayerCords.setX(newPlayerX);
-        addPlayerToMap(movingPlayer);
+        Player.clearPlayerFromMap(movingPlayer);
+        GameService.moveElementLeft(movingPlayer);
+        Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
 
-    private static boolean elementOnRightIsWall(Cords movingPlayerCords) {
-        return Game.getMapRepresentation().get(movingPlayerCords.getY()).get(movingPlayerCords.getX() + 1) == '#';
-    }
 
-    private static boolean cordsOutOfBoundsAfterGoRight(Cords movingPlayerCords) {
-        return movingPlayerCords.getX() + 1 > GameService.MAP_WIDTH - 1;
-    }
-
-    private static boolean elementBelowIsWall(Cords movingPlayerCords) {
-        return Game.getMapRepresentation().get(movingPlayerCords.getY() + 1).get(movingPlayerCords.getX()) == '#';
-    }
-
-    private static boolean cordsOutOfBoundsAfterGoDown(Cords movingPlayerCords) {
-        return movingPlayerCords.getY() + 1 > GameService.MAP_HEIGHT - 1;
-
-    }
-
-    private static boolean elementOnLeftIsWall(Cords movingPlayerCords) {
-        return Game.getMapRepresentation().get(movingPlayerCords.getY()).get(movingPlayerCords.getX() - 1) == '#';
-    }
-
-    private static boolean cordsOutOfBoundsAfterGoLeft(Cords movingPlayerCords) {
-        return movingPlayerCords.getX() - 1 < 0;
-    }
-
-    private static boolean elementAboveIsWall(Cords movingPlayerCords) {
-        return Game.getMapRepresentation().get(movingPlayerCords.getY() - 1).get(movingPlayerCords.getX()) == '#';
-    }
-
-    private static boolean cordsOutOfBoundsAfterGoUp(Cords movingPlayerCords) {
-        return movingPlayerCords.getY() - 1 < 0;
-    }
-
-    private static void addPlayerToMap(Player player) {
-        Game.getMapRepresentation().get(player.getPlayerCords().getY()).set(player.getPlayerCords().getX(), Character.forDigit(player.getNumber(), 10));
-    }
 }
