@@ -49,7 +49,7 @@ public class GameController {
             return;
         }
         Player.clearPlayerFromMap(movingPlayer);
-        GameService.moveElementUp(movingPlayer);
+        movingPlayer.moveElementUp();
         Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
@@ -66,7 +66,7 @@ public class GameController {
             return;
         }
         Player.clearPlayerFromMap(movingPlayer);
-        GameService.moveElementRight(movingPlayer);
+        movingPlayer.moveElementRight();
         Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
@@ -82,7 +82,7 @@ public class GameController {
             return;
         }
         Player.clearPlayerFromMap(movingPlayer);
-        GameService.moveElementDown(movingPlayer);
+        movingPlayer.moveElementDown();
         Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }
@@ -98,7 +98,7 @@ public class GameController {
             return;
         }
         Player.clearPlayerFromMap(movingPlayer);
-        GameService.moveElementLeft(movingPlayer);
+        movingPlayer.moveElementLeft();
         Player.addPlayerToMap(movingPlayer);
         TurnSystem.turnLock.unlock();
     }

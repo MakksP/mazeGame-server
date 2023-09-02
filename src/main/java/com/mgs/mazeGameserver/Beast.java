@@ -1,8 +1,11 @@
 package com.mgs.mazeGameserver;
 
+import java.util.*;
+
 public class Beast extends MovingElement implements Runnable{
 
-    public static final int BEAST_SLOW_DOWN_TIME_MS = 40;
+    public static final int BEAST_SLOW_DOWN_TIME_MS = 10;
+    public static final int FIRST_CORDS_INDEX = 0;
 
     public Beast(){
         cords = GameService.getRandomCords();
@@ -13,48 +16,105 @@ public class Beast extends MovingElement implements Runnable{
     public void run() {
         addBeastToMap();
         while (true){
-            try {
-                Thread.sleep(BEAST_SLOW_DOWN_TIME_MS);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            Cords destination = GameService.getRandomCords();
+            Queue<Cords> pointsQueue = new LinkedList<>();
+            List<Cords> visitedPoints = new ArrayList<>();
+            List<Cords> directions = initPossibleDirectionsList();
+            List<Cords> beastMovePath = new ArrayList<>();
+
+            if (searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions)){
+                beastMovePath = getBeastMovePath(visitedPoints);
+            } else {
+                System.out.println("dipa");
             }
-            TurnSystem.turnLock.lock();
-            int direction = (int) (Math.random() * 4);
-            if (direction == 0){
-                if (GameService.cordsOutOfBoundsAfterGoUp(cords) || GameService.elementAboveIsWall(cords)){
-                    TurnSystem.turnLock.unlock();
-                    continue;
+
+            for (Cords movePoint : beastMovePath){
+                try {
+                    Thread.sleep(BEAST_SLOW_DOWN_TIME_MS);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+                TurnSystem.turnLock.lock();
                 clearBeastFromMap();
-                GameService.moveElementUp(this);
+                setNewLocation(movePoint);
                 addBeastToMap();
-            }else if (direction == 1){
-                if (GameService.cordsOutOfBoundsAfterGoRight(cords) || GameService.elementOnRightIsWall(cords)){
+                if (movePoint.cordsAreEqual(destination)){
                     TurnSystem.turnLock.unlock();
-                    continue;
+                    break;
                 }
-                clearBeastFromMap();
-                GameService.moveElementRight(this);
-                addBeastToMap();
-            }else if (direction == 2){
-                if (GameService.cordsOutOfBoundsAfterGoDown(cords) || GameService.elementBelowIsWall(cords)){
-                    TurnSystem.turnLock.unlock();
-                    continue;
-                }
-                clearBeastFromMap();
-                GameService.moveElementDown(this);
-                addBeastToMap();
-            } else if (direction == 3){
-                if (GameService.cordsOutOfBoundsAfterGoLeft(cords) || GameService.elementOnLeftIsWall(cords)){
-                    TurnSystem.turnLock.unlock();
-                    continue;
-                }
-                clearBeastFromMap();
-                GameService.moveElementLeft(this);
-                addBeastToMap();
+                TurnSystem.turnLock.unlock();
             }
-            TurnSystem.turnLock.unlock();
+
         }
+    }
+
+    private static List<Cords> getBeastMovePath(List<Cords> visitedPoints) {
+        Collections.reverse(visitedPoints);
+        List<Cords> finalBeastPath = new ArrayList<>();
+        Cords startCords = visitedPoints.get(FIRST_CORDS_INDEX);
+        finalBeastPath.add(startCords);
+        for (int visitedPointsIndex = 1; visitedPointsIndex < visitedPoints.size(); visitedPointsIndex++){
+            Cords nextPoint = visitedPoints.get(visitedPointsIndex);
+            if (startCords.pointsAreSideBySide(nextPoint)){
+                finalBeastPath.add(nextPoint);
+                startCords = nextPoint;
+            }
+        }
+        Collections.reverse(finalBeastPath);
+        return finalBeastPath;
+    }
+
+    private static boolean searchMazeForPaths(Cords beastStartCords, Cords destination, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
+        pointsQueue.add(new Cords(beastStartCords.getX(), beastStartCords.getY()));
+        while (!pointsQueue.isEmpty()){
+            Cords currentConsideredPoint = pointsQueue.poll();
+            for (Cords direction : directions){
+                Cords newCords = getNewCordsInMazeAlgorithm(currentConsideredPoint, direction);
+                if (newCordsInMazeAlgorithmAreInsideMaze(newCords) && newCordsInMazeAlgorithmAreNotInWall(newCords) && !visitedPointsListHaveSpecificPoint(visitedPoints, newCords)){
+                    pointsQueue.add(new Cords(newCords.getX(), newCords.getY()));
+                    visitedPoints.add(newCords);
+
+                    if (reachedDestination(destination, currentConsideredPoint)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean visitedPointsListHaveSpecificPoint(List<Cords> visitedPoints, Cords cords){
+        for (Cords visitedPoint : visitedPoints){
+            if (cords.cordsAreEqual(visitedPoint)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Cords getNewCordsInMazeAlgorithm(Cords currentConsideredPoint, Cords direction) {
+        return new Cords(currentConsideredPoint.getX() + direction.getX(), currentConsideredPoint.getY() + direction.getY());
+    }
+
+    private static boolean newCordsInMazeAlgorithmAreInsideMaze(Cords newCords){
+        return newCords.getX() >= 0 && newCords.getX() < GameService.MAP_WIDTH && newCords.getY() >= 0 && newCords.getY() < GameService.MAP_HEIGHT;
+    }
+
+    private static boolean newCordsInMazeAlgorithmAreNotInWall(Cords newCords){
+        return Game.getMapRepresentation().get(newCords.getY()).get(newCords.getX()) != '#';
+    }
+
+    private static List<Cords> initPossibleDirectionsList() {
+        List<Cords> directions = new ArrayList<>();
+        directions.add(new Cords(0, 1));
+        directions.add(new Cords(0, -1));
+        directions.add(new Cords(1, 0));
+        directions.add(new Cords(-1, 0));
+        return directions;
+    }
+
+    private static boolean reachedDestination(Cords destination, Cords currentConsideredPoint) {
+        return currentConsideredPoint.getX() == destination.getX() && currentConsideredPoint.getY() == destination.getY();
     }
 
     private void addBeastToMap() {

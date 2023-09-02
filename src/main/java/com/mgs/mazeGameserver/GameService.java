@@ -127,28 +127,4 @@ public class GameService {
         return movingElementCords.getY() - 1 < 0;
     }
 
-
-    public static void moveElementLeft(MovingElement element) {
-        int newPlayerX = element.cords.getX() - 1;
-        element.standsOn = Game.getMapRepresentation().get(element.cords.getY()).get(newPlayerX);
-        element.cords.setX(newPlayerX);
-    }
-
-    public static void moveElementDown(MovingElement element) {
-        int newPlayerY = element.cords.getY() + 1;
-        element.standsOn = Game.getMapRepresentation().get(newPlayerY).get(element.cords.getX());
-        element.cords.setY(element.cords.getY() + 1);
-    }
-
-    public static void moveElementRight(MovingElement element) {
-        int newPlayerX = element.cords.getX() + 1;
-        element.standsOn = Game.getMapRepresentation().get(element.cords.getY()).get(newPlayerX);
-        element.cords.setX(newPlayerX);
-    }
-
-    public static void moveElementUp(MovingElement element) {
-        int newPlayerY = element.cords.getY() - 1;
-        element.standsOn = Game.getMapRepresentation().get(newPlayerY).get(element.cords.getX());
-        element.cords.setY(newPlayerY);
-    }
 }
