@@ -74,7 +74,7 @@ public class Beast extends MovingElement implements Runnable{
                     pointsQueue.add(new Cords(newCords.getX(), newCords.getY()));
                     visitedPoints.add(newCords);
 
-                    if (reachedDestination(destination, currentConsideredPoint)){
+                    if (reachedDestination(destination, newCords)){
                         return true;
                     }
                 }
