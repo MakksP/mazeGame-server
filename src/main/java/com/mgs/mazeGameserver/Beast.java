@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Beast extends MovingElement implements Runnable{
 
-    public static final int BEAST_SLOW_DOWN_TIME_MS = 10;
+    public static final int BEAST_SLOW_DOWN_TIME_MS = 100;
     public static final int FIRST_CORDS_INDEX = 0;
 
     public Beast(){
@@ -22,11 +22,9 @@ public class Beast extends MovingElement implements Runnable{
             List<Cords> directions = initPossibleDirectionsList();
             List<Cords> beastMovePath = new ArrayList<>();
 
-            if (searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions)){
-                beastMovePath = getBeastMovePath(visitedPoints);
-            } else {
-                System.out.println("dipa");
-            }
+            searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions);
+            beastMovePath = getBeastMovePath(visitedPoints);
+
 
             for (Cords movePoint : beastMovePath){
                 try {
@@ -118,6 +116,7 @@ public class Beast extends MovingElement implements Runnable{
     }
 
     private void addBeastToMap() {
+        standsOn = Game.getMapRepresentation().get(cords.getY()).get(cords.getX());
         Game.getMapRepresentation().get(cords.getY()).set(cords.getX(), '*');
     }
 

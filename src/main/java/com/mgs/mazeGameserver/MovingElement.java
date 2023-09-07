@@ -5,27 +5,27 @@ public class MovingElement {
     protected char standsOn;
 
     public void moveElementLeft() {
-        int newPlayerX = this.cords.getX() - 1;
-        this.standsOn = Game.getMapRepresentation().get(this.cords.getY()).get(newPlayerX);
-        this.cords.setX(newPlayerX);
+        int newElementX = this.cords.getX() - 1;
+        this.standsOn = Game.getMapRepresentation().get(this.cords.getY()).get(newElementX);
+        this.cords.setX(newElementX);
     }
 
     public void moveElementDown() {
-        int newPlayerY = this.cords.getY() + 1;
-        this.standsOn = Game.getMapRepresentation().get(newPlayerY).get(this.cords.getX());
+        int newElementY = this.cords.getY() + 1;
+        this.standsOn = Game.getMapRepresentation().get(newElementY).get(this.cords.getX());
         this.cords.setY(this.cords.getY() + 1);
     }
 
     public void moveElementRight() {
-        int newPlayerX = this.cords.getX() + 1;
-        this.standsOn = Game.getMapRepresentation().get(this.cords.getY()).get(newPlayerX);
-        this.cords.setX(newPlayerX);
+        int newElementX = this.cords.getX() + 1;
+        this.standsOn = Game.getMapRepresentation().get(this.cords.getY()).get(newElementX);
+        this.cords.setX(newElementX);
     }
 
     public void moveElementUp() {
-        int newPlayerY = this.cords.getY() - 1;
-        this.standsOn = Game.getMapRepresentation().get(newPlayerY).get(this.cords.getX());
-        this.cords.setY(newPlayerY);
+        int newElementY = this.cords.getY() - 1;
+        this.standsOn = Game.getMapRepresentation().get(newElementY).get(this.cords.getX());
+        this.cords.setY(newElementY);
     }
 
     public void setNewLocation(Cords newCords){

@@ -3,7 +3,7 @@ package com.mgs.mazeGameserver;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TurnSystem implements Runnable{
-    public static final int SINGLE_TURN_TIME_MS = 100;
+    public static final int SINGLE_TURN_TIME_MS = 120;
     public static final ReentrantLock turnLock = new ReentrantLock();
 
     @Override
