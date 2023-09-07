@@ -1,6 +1,7 @@
 package com.mgs.mazeGameserver;
 
 public class Player extends MovingElement{
+    public Cords spawnPoint;
     public int points;
     public int storedPoints;
     public int number;
@@ -9,6 +10,7 @@ public class Player extends MovingElement{
     
     public Player(Cords cords, int playerNumber, String nick){
         this.cords = cords;
+        this.spawnPoint = cords;
         points = 0;
         storedPoints = 0;
         number = playerNumber;
