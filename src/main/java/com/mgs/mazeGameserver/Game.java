@@ -6,6 +6,9 @@ import java.util.List;
 
 public class Game {
     public static final int FIRST_AVAILABLE_PLAYER_NUMBER = 1;
+    public static final int COINS_IN_MAZE = 25;
+    public static final int SMALL_TREASURES_IN_MAZE = 15;
+    public static final int BIG_TREASURES_IN_MAZE = 5;
     private static List<List<Character>> mapRepresentation;
     private static Game gameMap;
     private static List<Player> playerList;
@@ -13,6 +16,13 @@ public class Game {
     private Game(){
         mapRepresentation = new ArrayList<>();
         playerList = new ArrayList<>();
+        generateMaze();
+        addCoinsToMaze();
+        addSmallTreasuresToMaze();
+        addBigTreasuresToMaze();
+    }
+
+    private static void generateMaze() {
         int mapRepresentationRowCounter = 0;
         mapRepresentation.add(new ArrayList<>());
         for (int mazeElement = 0; mazeElement < RawMaze.maze.length(); mazeElement++){
@@ -23,6 +33,27 @@ public class Game {
             } else {
                 mapRepresentation.get(mapRepresentationRowCounter).add(currentElement);
             }
+        }
+    }
+
+    private static void addCoinsToMaze(){
+        for (int coinsCounter = 0; coinsCounter < COINS_IN_MAZE; coinsCounter++) {
+            Cords coinCords = GameService.getRandomCords();
+            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), 'c');
+        }
+    }
+
+    private static void addSmallTreasuresToMaze(){
+        for (int coinsCounter = 0; coinsCounter < SMALL_TREASURES_IN_MAZE; coinsCounter++) {
+            Cords coinCords = GameService.getRandomCords();
+            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), 't');
+        }
+    }
+
+    private static void addBigTreasuresToMaze(){
+        for (int coinsCounter = 0; coinsCounter < BIG_TREASURES_IN_MAZE; coinsCounter++) {
+            Cords coinCords = GameService.getRandomCords();
+            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), 'T');
         }
     }
 
