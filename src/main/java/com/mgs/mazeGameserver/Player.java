@@ -49,8 +49,8 @@ public class Player extends MovingElement{
         Game.getPlayerList().remove(playerToRemove);
         Player.clearPlayerFromMap(playerToRemove);
     }
-
     public static void addPlayerToMap(Player player) {
+        GameService.addPointsToPlayerIfStandOnValuableField(player);
         Game.getMapRepresentation().get(player.getPlayerCords().getY()).set(player.getPlayerCords().getX(), Character.forDigit(player.getNumber(), 10));
     }
 

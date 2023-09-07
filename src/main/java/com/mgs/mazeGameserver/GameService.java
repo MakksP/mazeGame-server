@@ -127,4 +127,11 @@ public class GameService {
         return movingElementCords.getY() - 1 < 0;
     }
 
+    public static void addPointsToPlayerIfStandOnValuableField(Player player) {
+        if (player.standsOn == 'c' || player.standsOn == 't' || player.standsOn == 'T'){
+            player.points += Game.getObjectsValue().get(player.standsOn);
+            player.standsOn = ' ';
+        }
+    }
+
 }

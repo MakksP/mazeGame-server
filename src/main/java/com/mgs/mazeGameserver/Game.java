@@ -1,10 +1,11 @@
 package com.mgs.mazeGameserver;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Game {
+    public static final int COIN_VALUE = 15;
+    public static final int SMALL_TREASURE_VALUE = 25;
+    public static final int BIG_TREASURE_VALUE = 50;
     public static final int FIRST_AVAILABLE_PLAYER_NUMBER = 1;
     public static final int COINS_IN_MAZE = 25;
     public static final int SMALL_TREASURES_IN_MAZE = 15;
@@ -12,10 +13,15 @@ public class Game {
     private static List<List<Character>> mapRepresentation;
     private static Game gameMap;
     private static List<Player> playerList;
+    private static Map<Character, Integer> objectsValue;
 
     private Game(){
         mapRepresentation = new ArrayList<>();
         playerList = new ArrayList<>();
+        objectsValue = new HashMap<>();
+        objectsValue.put('c', COIN_VALUE);
+        objectsValue.put('t', SMALL_TREASURE_VALUE);
+        objectsValue.put('T', BIG_TREASURE_VALUE);
         generateMaze();
         addCoinsToMaze();
         addSmallTreasuresToMaze();
@@ -132,6 +138,10 @@ public class Game {
         for (Player player : playerList){
             playerNumbers.add(player.getNumber());
         }
+    }
+
+    public static Map<Character, Integer> getObjectsValue(){
+        return objectsValue;
     }
 
 }
