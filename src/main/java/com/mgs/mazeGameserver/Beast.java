@@ -6,6 +6,12 @@ public class Beast extends MovingElement implements Runnable{
 
     public static final int BEAST_SLOW_DOWN_TIME_MS = 100;
     public static final int FIRST_CORDS_INDEX = 0;
+    public static final int INVISIBLE_FIELDS_IN_FIRST_ROW = 5;
+    public static final int INVISIBLE_FIELDS_Y_X_LOWER_OFFSET = 2;
+    public static final int INVISIBLE_FIELDS_Y_X_BIGGER_OFFSET = 3;
+    public static final int INVISIBLE_FIELDS_IN_SECOND_ROW = 3;
+    public static final int ONE_ROW_LOWER = 1;
+    public static final int WITHOUT_ONE_FIELD = 1;
 
     public Beast(){
         cords = GameService.getRandomCords();
@@ -32,6 +38,8 @@ public class Beast extends MovingElement implements Runnable{
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+                List<List<VisibleAreaMapPoint>> beastVisibleArea = GameService.getVisibleAreaByCords(cords);
+                BeastVisibleArea.makeActualBeastVisibleArea(beastVisibleArea, this.cords);
                 TurnSystem.turnLock.lock();
                 clearBeastFromMap();
                 setNewLocation(movePoint);

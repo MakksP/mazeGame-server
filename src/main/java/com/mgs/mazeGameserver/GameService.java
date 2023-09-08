@@ -34,6 +34,17 @@ public class GameService {
         return mapVisibleAreaRepresentation;
     }
 
+    public static List<List<VisibleAreaMapPoint>> getVisibleAreaByCords(Cords cords){
+        List<List<Character>> wholeMapRepresentation = Game.getMapRepresentation();
+        List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation = new ArrayList<>();
+        int currentXMapPosition = getFirstXOfVisibleArea(cords.getX());
+        int currentYMapPosition = getFirstYOfVisibleArea(cords.getY());
+        int rowCounter = 0;
+        int maxVisibleY = getMaxVisibleY(currentYMapPosition);
+        createPlayerArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition, rowCounter, maxVisibleY);
+        return mapVisibleAreaRepresentation;
+    }
+
     private static void createPlayerArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation, int currentXMapPosition, int currentYMapPosition, int rowCounter, int maxVisibleY) {
         for (; currentYMapPosition < maxVisibleY; currentYMapPosition++){
             mapVisibleAreaRepresentation.add(new ArrayList<>());
