@@ -62,11 +62,12 @@ public class BeastVisibleArea {
                 continue;
             }
             for (Cords invisibleElement : invisibleElementsRow){
-                if (!invisibleElement.cordsAreEqual(beastVisibleAreaElement.getElementCords())){
-                    actualBeastVisibleArea.add(beastVisibleAreaElement);
+                if (invisibleElement.cordsAreEqual(beastVisibleAreaElement.getElementCords())){
+                    return;
                 }
             }
         }
+        actualBeastVisibleArea.add(beastVisibleAreaElement);
     }
 
     private static void fillInvisibleElementsList(List<Cords> wallPositionsInRelationToPlayer, List<List<Cords>> invisibleElementsInRelationToBeast) {
