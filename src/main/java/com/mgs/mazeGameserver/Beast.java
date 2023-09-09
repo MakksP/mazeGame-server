@@ -32,6 +32,7 @@ public class Beast extends MovingElement implements Runnable{
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+                clearBeastVisible();
                 List<List<VisibleAreaMapPoint>> beastVisibleArea = GameService.getVisibleAreaByCords(cords);
                 List<VisibleAreaMapPoint> beastView = BeastVisibleArea.makeActualBeastVisibleArea(beastVisibleArea, this.cords);
                 testBeastVisible(beastView);
@@ -50,17 +51,20 @@ public class Beast extends MovingElement implements Runnable{
     }
 
     private static void testBeastVisible(List<VisibleAreaMapPoint> beastView) {
+
+        for (VisibleAreaMapPoint singleViewPoint : beastView){
+            if (Game.getMapRepresentation().get(singleViewPoint.getElementCords().getY()).get(singleViewPoint.getElementCords().getX()) == ' '){
+                Game.getMapRepresentation().get(singleViewPoint.getElementCords().getY()).set(singleViewPoint.getElementCords().getX(), '@');
+            }
+        }
+    }
+
+    private static void clearBeastVisible(){
         for (int i = 0; i < Game.getMapRepresentation().size(); i++){
             for (int j = 0; j < Game.getMapRepresentation().get(i).size(); j++) {
                 if (Game.getMapRepresentation().get(i).get(j) == '@'){
                     Game.getMapRepresentation().get(i).set(j, ' ');
                 }
-            }
-        }
-
-        for (VisibleAreaMapPoint singleViewPoint : beastView){
-            if (Game.getMapRepresentation().get(singleViewPoint.getElementCords().getY()).get(singleViewPoint.getElementCords().getX()) == ' '){
-                Game.getMapRepresentation().get(singleViewPoint.getElementCords().getY()).set(singleViewPoint.getElementCords().getX(), '@');
             }
         }
     }

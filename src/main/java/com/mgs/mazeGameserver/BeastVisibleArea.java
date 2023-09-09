@@ -58,9 +58,6 @@ public class BeastVisibleArea {
 
     private static void checkInvisibleElementsList(List<List<Cords>> invisibleElementsInRelationToBeast, List<VisibleAreaMapPoint> actualBeastVisibleArea, VisibleAreaMapPoint beastVisibleAreaElement) {
         for (List<Cords> invisibleElementsRow : invisibleElementsInRelationToBeast){
-            if (invisibleElementsRow == null){
-                continue;
-            }
             for (Cords invisibleElement : invisibleElementsRow){
                 if (invisibleElement.cordsAreEqual(beastVisibleAreaElement.getElementCords())){
                     return;
@@ -71,17 +68,22 @@ public class BeastVisibleArea {
     }
 
     private static void fillInvisibleElementsList(List<Cords> wallPositionsInRelationToPlayer, List<List<Cords>> invisibleElementsInRelationToBeast) {
+        int invisibleElementsInRelationToBeastCounter = 0;
         for (Cords wall : wallPositionsInRelationToPlayer){
-            invisibleElementsInRelationToBeast.add(invisibleFieldsInRelationToTheWalls.get(wall));
+            invisibleElementsInRelationToBeast.add(new ArrayList<>());
+            if (invisibleFieldsInRelationToTheWalls.get(wall) == null){
+                continue;
+            }
+            for (Cords hiddenFieldsCords : invisibleFieldsInRelationToTheWalls.get(wall)){
+                invisibleElementsInRelationToBeast.get(invisibleElementsInRelationToBeastCounter).add(new Cords(hiddenFieldsCords.getX(), hiddenFieldsCords.getY()));
+            }
+
+            invisibleElementsInRelationToBeastCounter++;
         }
     }
 
     private static void convertInvisibleElementsCordsToNatural(Cords beastCords, List<List<Cords>> invisibleElementsInRelationToBeast) {
         for (List<Cords> invisibleElementsRow : invisibleElementsInRelationToBeast){
-            if (invisibleElementsRow == null){
-                continue;
-            }
-
             for (Cords invisibleElement : invisibleElementsRow){
                 invisibleElement.setX(invisibleElement.getX() + beastCords.getX());
                 invisibleElement.setY(invisibleElement.getY() + beastCords.getY());
