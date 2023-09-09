@@ -1,5 +1,7 @@
 package com.mgs.mazeGameserver;
 
+import java.util.Objects;
+
 public class Cords {
     private int x;
     private int y;
@@ -38,5 +40,18 @@ public class Cords {
                 || (this.x == cords.x - 1 && this.y == cords.y)
                 || (this.x == cords.x && this.y == cords.y - 1)
                 || (this.x == cords.x && this.y == cords.y + 1);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cords cords = (Cords) o;
+        return x == cords.x && y == cords.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
