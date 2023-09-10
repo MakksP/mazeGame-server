@@ -15,11 +15,11 @@ public class GameService {
     public static final int MAX_MAP_WIDTH_AS_INDEX = MAP_WIDTH - 1;
 
     public static Cords getRandomCords(){
-        int x = (int) (Math.random() * (MAP_WIDTH - 1));
-        int y = (int) (Math.random() * (MAP_HEIGHT - 1));
+        int x = (int) (Math.random() * (MAX_MAP_WIDTH_AS_INDEX));
+        int y = (int) (Math.random() * (MAX_MAP_HEIGHT_AS_INDEX));
         while (locationIsBusy(x, y)){
-            x = (int) (Math.random() * (MAP_WIDTH - 1));
-            y = (int) (Math.random() * (MAP_HEIGHT - 1));
+            x = (int) (Math.random() * (MAX_MAP_WIDTH_AS_INDEX));
+            y = (int) (Math.random() * (MAX_MAP_HEIGHT_AS_INDEX));
         }
         return new Cords(x, y);
     }
@@ -32,8 +32,9 @@ public class GameService {
         int currentYMapPosition = getFirstYOfVisibleArea(currentPlayer.getPlayerCords().getY());
         int rowCounter = 0;
         int maxVisibleY = getMaxVisibleY(currentPlayer.getPlayerCords().getY());
+        int maxVisibleX = getMaxVisibleX(currentPlayer.getPlayerCords().getX());
         createElementArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition,
-                rowCounter, maxVisibleY, currentPlayer.getPlayerCords().getY());
+                rowCounter, maxVisibleY, maxVisibleX);
         return mapVisibleAreaRepresentation;
     }
 
@@ -44,15 +45,15 @@ public class GameService {
         int currentYMapPosition = getFirstYOfVisibleArea(cords.getY());
         int rowCounter = 0;
         int maxVisibleY = getMaxVisibleY(cords.getY());
-        createElementArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition, rowCounter, maxVisibleY, cords.getX());
+        int maxVisibleX = getMaxVisibleX(cords.getX());
+        createElementArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition, rowCounter, maxVisibleY, maxVisibleX);
         return mapVisibleAreaRepresentation;
     }
 
     private static void createElementArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation, int currentXMapPosition,
-                                          int currentYMapPosition, int rowCounter, int maxVisibleY, int elementXCord) {
+                                          int currentYMapPosition, int rowCounter, int maxVisibleY, int maxVisibleX) {
         for (; currentYMapPosition <= maxVisibleY; currentYMapPosition++){
             mapVisibleAreaRepresentation.add(new ArrayList<>());
-            int maxVisibleX = getMaxVisibleX(elementXCord);
             for (int tempXPosition = currentXMapPosition; tempXPosition <= maxVisibleX; tempXPosition++){
                 mapVisibleAreaRepresentation.get(rowCounter).add(getCurrentMapElement(wholeMapRepresentation, currentYMapPosition, tempXPosition));
             }
