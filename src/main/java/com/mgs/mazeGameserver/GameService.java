@@ -8,9 +8,11 @@ import java.util.List;
 @Service
 public class GameService {
     public static final int VISIBILITY_LENGHT = 3;
-    public static final int MAX_X_Y_IN_AREA = 7;
+    public static final int MAX_X_Y_IN_AREA = 3;
     public static int MAP_HEIGHT = 35;
+    public static final int MAX_MAP_HEIGHT_AS_INDEX = MAP_HEIGHT - 1;
     public static int MAP_WIDTH = 49;
+    public static final int MAX_MAP_WIDTH_AS_INDEX = MAP_WIDTH - 1;
 
     public static Cords getRandomCords(){
         int x = (int) (Math.random() * (MAP_WIDTH - 1));
@@ -29,8 +31,9 @@ public class GameService {
         int currentXMapPosition = getFirstXOfVisibleArea(currentPlayer.getPlayerCords().getX());
         int currentYMapPosition = getFirstYOfVisibleArea(currentPlayer.getPlayerCords().getY());
         int rowCounter = 0;
-        int maxVisibleY = getMaxVisibleY(currentYMapPosition);
-        createPlayerArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition, rowCounter, maxVisibleY);
+        int maxVisibleY = getMaxVisibleY(currentPlayer.getPlayerCords().getY());
+        createElementArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition,
+                rowCounter, maxVisibleY, currentPlayer.getPlayerCords().getY());
         return mapVisibleAreaRepresentation;
     }
 
@@ -40,16 +43,17 @@ public class GameService {
         int currentXMapPosition = getFirstXOfVisibleArea(cords.getX());
         int currentYMapPosition = getFirstYOfVisibleArea(cords.getY());
         int rowCounter = 0;
-        int maxVisibleY = getMaxVisibleY(currentYMapPosition);
-        createPlayerArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition, rowCounter, maxVisibleY);
+        int maxVisibleY = getMaxVisibleY(cords.getY());
+        createElementArea(wholeMapRepresentation, mapVisibleAreaRepresentation, currentXMapPosition, currentYMapPosition, rowCounter, maxVisibleY, cords.getX());
         return mapVisibleAreaRepresentation;
     }
 
-    private static void createPlayerArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation, int currentXMapPosition, int currentYMapPosition, int rowCounter, int maxVisibleY) {
-        for (; currentYMapPosition < maxVisibleY; currentYMapPosition++){
+    private static void createElementArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation, int currentXMapPosition,
+                                          int currentYMapPosition, int rowCounter, int maxVisibleY, int elementXCord) {
+        for (; currentYMapPosition <= maxVisibleY; currentYMapPosition++){
             mapVisibleAreaRepresentation.add(new ArrayList<>());
-            int maxVisibleX = getMaxVisibleX(currentXMapPosition);
-            for (int tempXPosition = currentXMapPosition; tempXPosition < maxVisibleX; tempXPosition++){
+            int maxVisibleX = getMaxVisibleX(elementXCord);
+            for (int tempXPosition = currentXMapPosition; tempXPosition <= maxVisibleX; tempXPosition++){
                 mapVisibleAreaRepresentation.get(rowCounter).add(getCurrentMapElement(wholeMapRepresentation, currentYMapPosition, tempXPosition));
             }
             rowCounter++;
@@ -69,32 +73,32 @@ public class GameService {
         return new VisibleAreaMapPoint(new Cords(xMapPosition, yMapPosition), wholeMapRepresentation.get(yMapPosition).get(xMapPosition));
     }
 
-    private static int getMaxVisibleX(int currentXMapPosition) {
-        int maxVisibleX = currentXMapPosition + MAX_X_Y_IN_AREA;
-        if (maxVisibleX > MAP_WIDTH){
-            maxVisibleX = MAP_WIDTH;
+    private static int getMaxVisibleX(int elementXCord) {
+        int maxVisibleX = elementXCord + MAX_X_Y_IN_AREA;
+        if (maxVisibleX >= MAP_WIDTH){
+            maxVisibleX = MAX_MAP_WIDTH_AS_INDEX;
         }
         return maxVisibleX;
     }
 
-    private static int getMaxVisibleY(int currentYMapPosition) {
-        int maxVisibleY = currentYMapPosition + MAX_X_Y_IN_AREA;
-        if (maxVisibleY > MAP_HEIGHT){
-            maxVisibleY = MAP_HEIGHT;
+    private static int getMaxVisibleY(int elementYCord) {
+        int maxVisibleY = elementYCord + MAX_X_Y_IN_AREA;
+        if (maxVisibleY >= MAP_HEIGHT){
+            maxVisibleY = MAX_MAP_HEIGHT_AS_INDEX;
         }
         return maxVisibleY;
     }
 
-    private static int getFirstYOfVisibleArea(int currentPlayer) {
-        int currentYMapPosition = currentPlayer - VISIBILITY_LENGHT;
+    private static int getFirstYOfVisibleArea(int elementYCord) {
+        int currentYMapPosition = elementYCord - VISIBILITY_LENGHT;
         if (currentYMapPosition < 0) {
             currentYMapPosition = 0;
         }
         return currentYMapPosition;
     }
 
-    private static int getFirstXOfVisibleArea(int currentPlayer) {
-        int currentXMapPosition = currentPlayer - VISIBILITY_LENGHT;
+    private static int getFirstXOfVisibleArea(int elementXCord) {
+        int currentXMapPosition = elementXCord - VISIBILITY_LENGHT;
         if (currentXMapPosition < 0) {
             currentXMapPosition = 0;
         }

@@ -46,7 +46,6 @@ public class Beast extends MovingElement implements Runnable{
                 }
                 TurnSystem.turnLock.unlock();
             }
-
         }
     }
 
