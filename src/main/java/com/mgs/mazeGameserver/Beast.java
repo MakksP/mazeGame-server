@@ -32,10 +32,11 @@ public class Beast extends MovingElement implements Runnable{
                     throw new RuntimeException(e);
                 }
                 List<VisibleAreaMapPoint> beastView = getBeastView();
-                Cords playerCords = playerCordsSeenByBeast(beastView);
+                char playerId = playerIdSeenByBeast(beastView);
 
-                if (beastSeePlayer(playerCords)){
-                    actionAfterPlayerDetection(pointsQueue, visitedPoints, directions, playerCords);
+                if (beastSeePlayer(playerId)){
+                    Player attackedPlayer = Player.getPlayerById(Integer.parseInt(String.valueOf(playerId)));
+                    actionAfterPlayerDetection(pointsQueue, visitedPoints, directions, attackedPlayer);
                     break;
                 }
 
@@ -52,15 +53,15 @@ public class Beast extends MovingElement implements Runnable{
         }
     }
 
-    private void actionAfterPlayerDetection(Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions, Cords playerCords) {
+    private void actionAfterPlayerDetection(Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions, Player attackedPlayer) {
         pointsQueue.clear();
         visitedPoints.clear();
-        serveBeastAttack(playerCords, pointsQueue, visitedPoints, directions);
+        serveBeastAttack(attackedPlayer, pointsQueue, visitedPoints, directions);
     }
 
-    private void serveBeastAttack(Cords destination, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
+    private void serveBeastAttack(Player attackedPlayer, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
         List<Cords> beastMovePath;
-        BeastVisibleArea.searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions);
+        BeastVisibleArea.searchMazeForPaths(this.cords, attackedPlayer.getPlayerCords(), pointsQueue, visitedPoints, directions);
         beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
         for (Cords attackPoint : beastMovePath){
             try {
@@ -72,25 +73,26 @@ public class Beast extends MovingElement implements Runnable{
             clearBeastFromMap();
             setNewLocation(attackPoint);
             addBeastToMap();
-            if (attackPoint.cordsAreEqual(destination)){
+            if (attackPoint.cordsAreEqual(attackedPlayer.getPlayerCords())){
                 TurnSystem.turnLock.unlock();
+
                 break;
             }
             TurnSystem.turnLock.unlock();
         }
     }
 
-    private static boolean beastSeePlayer(Cords playerCords) {
-        return playerCords.getY() != -1 && playerCords.getX() != -1;
+    private static boolean beastSeePlayer(char playerId) {
+        return playerId != '0';
     }
 
-    private Cords playerCordsSeenByBeast(List<VisibleAreaMapPoint> beastView) {
+    private char playerIdSeenByBeast(List<VisibleAreaMapPoint> beastView) {
         for (VisibleAreaMapPoint beastViewPoint : beastView){
-            if (beastViewPoint.getElement() == '1'){
-                return beastViewPoint.getElementCords();
+            if (Character.isDigit(beastViewPoint.getElement())){
+                return beastViewPoint.getElement();
             }
         }
-        return new Cords(-1, -1);
+        return '0';
     }
 
     private List<VisibleAreaMapPoint> getBeastView() {
