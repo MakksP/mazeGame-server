@@ -10,7 +10,7 @@ public class Player extends MovingElement{
     
     public Player(Cords cords, int playerNumber, String nick){
         this.cords = cords;
-        this.spawnPoint = cords;
+        this.spawnPoint = new Cords(cords.getX(), cords.getY());
         points = 0;
         storedPoints = 0;
         number = playerNumber;

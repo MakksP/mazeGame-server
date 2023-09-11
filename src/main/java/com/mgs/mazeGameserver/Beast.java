@@ -72,14 +72,27 @@ public class Beast extends MovingElement implements Runnable{
             TurnSystem.turnLock.lock();
             clearBeastFromMap();
             setNewLocation(attackPoint);
-            addBeastToMap();
             if (attackPoint.cordsAreEqual(attackedPlayer.getPlayerCords())){
                 TurnSystem.turnLock.unlock();
-
+                serveBeastKillPlayer(attackedPlayer);
+                addBeastToMap();
                 break;
             }
+            addBeastToMap();
+
             TurnSystem.turnLock.unlock();
         }
+    }
+
+    private static void serveBeastKillPlayer(Player attackedPlayer) {
+        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), attackedPlayer.standsOn);
+        attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
+        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), convertIntPlayerNumberToChar(attackedPlayer));
+        attackedPlayer.deaths++;
+    }
+
+    private static char convertIntPlayerNumberToChar(Player attackedPlayer) {
+        return (char) ((char) attackedPlayer.getNumber() + '0');
     }
 
     private static boolean beastSeePlayer(char playerId) {
