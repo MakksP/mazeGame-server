@@ -54,4 +54,28 @@ public class Player extends MovingElement{
         Game.getMapRepresentation().get(player.getPlayerCords().getY()).set(player.getPlayerCords().getX(), Character.forDigit(player.getNumber(), 10));
     }
 
+    public void movePlayer(MoveDirection direction){
+        if (direction == MoveDirection.UP){
+            moveElementUp();
+        } else if (direction == MoveDirection.RIGHT){
+            moveElementRight();
+        } else if (direction == MoveDirection.DOWN){
+            moveElementDown();
+        } else if (direction == MoveDirection.LEFT){
+            moveElementLeft();
+        }
+        if (playerEnteredIntoBeast()){
+            GameService.servePlayerDeath(this);
+            makePlayerStandOnAsEmpty();
+        }
+    }
+
+    private void makePlayerStandOnAsEmpty() {
+        this.standsOn = ' ';
+    }
+
+    private boolean playerEnteredIntoBeast() {
+        return this.standsOn == '*';
+    }
+
 }

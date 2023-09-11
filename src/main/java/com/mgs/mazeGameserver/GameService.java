@@ -150,4 +150,15 @@ public class GameService {
         }
     }
 
+    private static char convertIntPlayerNumberToChar(Player attackedPlayer) {
+        return (char) ((char) attackedPlayer.getNumber() + '0');
+    }
+
+    public static void servePlayerDeath(Player attackedPlayer) {
+        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), attackedPlayer.standsOn);
+        attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
+        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), convertIntPlayerNumberToChar(attackedPlayer));
+        attackedPlayer.deaths++;
+    }
+
 }

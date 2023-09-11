@@ -19,7 +19,7 @@ public class Beast extends MovingElement implements Runnable{
             Queue<Cords> pointsQueue = new LinkedList<>();
             List<Cords> visitedPoints = new ArrayList<>();
             List<Cords> directions = initPossibleDirectionsList();
-            List<Cords> beastMovePath = new ArrayList<>();
+            List<Cords> beastMovePath;
 
             BeastVisibleArea.searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions);
             beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
@@ -74,7 +74,7 @@ public class Beast extends MovingElement implements Runnable{
             setNewLocation(attackPoint);
             if (attackPoint.cordsAreEqual(attackedPlayer.getPlayerCords())){
                 TurnSystem.turnLock.unlock();
-                serveBeastKillPlayer(attackedPlayer);
+                GameService.servePlayerDeath(attackedPlayer);
                 addBeastToMap();
                 break;
             }
@@ -84,16 +84,6 @@ public class Beast extends MovingElement implements Runnable{
         }
     }
 
-    private static void serveBeastKillPlayer(Player attackedPlayer) {
-        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), attackedPlayer.standsOn);
-        attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
-        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), convertIntPlayerNumberToChar(attackedPlayer));
-        attackedPlayer.deaths++;
-    }
-
-    private static char convertIntPlayerNumberToChar(Player attackedPlayer) {
-        return (char) ((char) attackedPlayer.getNumber() + '0');
-    }
 
     private static boolean beastSeePlayer(char playerId) {
         return playerId != '0';
