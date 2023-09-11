@@ -5,7 +5,6 @@ import java.util.*;
 public class Beast extends MovingElement implements Runnable{
 
     public static final int BEAST_SLOW_DOWN_TIME_MS = 100;
-    public static final int FIRST_CORDS_INDEX = 0;
 
     public Beast(){
         cords = GameService.getRandomCords();
@@ -22,8 +21,8 @@ public class Beast extends MovingElement implements Runnable{
             List<Cords> directions = initPossibleDirectionsList();
             List<Cords> beastMovePath = new ArrayList<>();
 
-            searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions);
-            beastMovePath = getBeastMovePath(visitedPoints);
+            BeastVisibleArea.searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions);
+            beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
 
 
             for (Cords movePoint : beastMovePath){
@@ -32,10 +31,14 @@ public class Beast extends MovingElement implements Runnable{
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                clearBeastVisible();
-                List<List<VisibleAreaMapPoint>> beastVisibleArea = GameService.getVisibleAreaByCords(cords);
-                List<VisibleAreaMapPoint> beastView = BeastVisibleArea.makeActualBeastVisibleArea(beastVisibleArea, this.cords);
-                testBeastVisible(beastView);
+                List<VisibleAreaMapPoint> beastView = getBeastView();
+                Cords playerCords = playerCordsSeenByBeast(beastView);
+
+                if (beastSeePlayer(playerCords)){
+                    actionAfterPlayerDetection(pointsQueue, visitedPoints, directions, playerCords);
+                    break;
+                }
+
                 TurnSystem.turnLock.lock();
                 clearBeastFromMap();
                 setNewLocation(movePoint);
@@ -47,6 +50,53 @@ public class Beast extends MovingElement implements Runnable{
                 TurnSystem.turnLock.unlock();
             }
         }
+    }
+
+    private void actionAfterPlayerDetection(Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions, Cords playerCords) {
+        pointsQueue.clear();
+        visitedPoints.clear();
+        serveBeastAttack(playerCords, pointsQueue, visitedPoints, directions);
+    }
+
+    private void serveBeastAttack(Cords destination, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
+        List<Cords> beastMovePath;
+        BeastVisibleArea.searchMazeForPaths(this.cords, destination, pointsQueue, visitedPoints, directions);
+        beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
+        for (Cords attackPoint : beastMovePath){
+            try {
+                Thread.sleep(BEAST_SLOW_DOWN_TIME_MS);
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+            TurnSystem.turnLock.lock();
+            clearBeastFromMap();
+            setNewLocation(attackPoint);
+            addBeastToMap();
+            if (attackPoint.cordsAreEqual(destination)){
+                TurnSystem.turnLock.unlock();
+                break;
+            }
+            TurnSystem.turnLock.unlock();
+        }
+    }
+
+    private static boolean beastSeePlayer(Cords playerCords) {
+        return playerCords.getY() != -1 && playerCords.getX() != -1;
+    }
+
+    private Cords playerCordsSeenByBeast(List<VisibleAreaMapPoint> beastView) {
+        for (VisibleAreaMapPoint beastViewPoint : beastView){
+            if (beastViewPoint.getElement() == '1'){
+                return beastViewPoint.getElementCords();
+            }
+        }
+        return new Cords(-1, -1);
+    }
+
+    private List<VisibleAreaMapPoint> getBeastView() {
+        List<List<VisibleAreaMapPoint>> beastVisibleArea = GameService.getVisibleAreaByCords(cords);
+        List<VisibleAreaMapPoint> beastView = BeastVisibleArea.makeActualBeastVisibleArea(beastVisibleArea, this.cords);
+        return beastView;
     }
 
     private static void testBeastVisible(List<VisibleAreaMapPoint> beastView) {
@@ -68,61 +118,6 @@ public class Beast extends MovingElement implements Runnable{
         }
     }
 
-    private static List<Cords> getBeastMovePath(List<Cords> visitedPoints) {
-        Collections.reverse(visitedPoints);
-        List<Cords> finalBeastPath = new ArrayList<>();
-        Cords startCords = visitedPoints.get(FIRST_CORDS_INDEX);
-        finalBeastPath.add(startCords);
-        for (int visitedPointsIndex = 1; visitedPointsIndex < visitedPoints.size(); visitedPointsIndex++){
-            Cords nextPoint = visitedPoints.get(visitedPointsIndex);
-            if (startCords.pointsAreSideBySide(nextPoint)){
-                finalBeastPath.add(nextPoint);
-                startCords = nextPoint;
-            }
-        }
-        Collections.reverse(finalBeastPath);
-        return finalBeastPath;
-    }
-
-    private static boolean searchMazeForPaths(Cords beastStartCords, Cords destination, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
-        pointsQueue.add(new Cords(beastStartCords.getX(), beastStartCords.getY()));
-        while (!pointsQueue.isEmpty()){
-            Cords currentConsideredPoint = pointsQueue.poll();
-            for (Cords direction : directions){
-                Cords newCords = getNewCordsInMazeAlgorithm(currentConsideredPoint, direction);
-                if (newCordsInMazeAlgorithmAreInsideMaze(newCords) && newCordsInMazeAlgorithmAreNotInWall(newCords) && !visitedPointsListHaveSpecificPoint(visitedPoints, newCords)){
-                    pointsQueue.add(new Cords(newCords.getX(), newCords.getY()));
-                    visitedPoints.add(newCords);
-
-                    if (reachedDestination(destination, newCords)){
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private static boolean visitedPointsListHaveSpecificPoint(List<Cords> visitedPoints, Cords cords){
-        for (Cords visitedPoint : visitedPoints){
-            if (cords.cordsAreEqual(visitedPoint)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static Cords getNewCordsInMazeAlgorithm(Cords currentConsideredPoint, Cords direction) {
-        return new Cords(currentConsideredPoint.getX() + direction.getX(), currentConsideredPoint.getY() + direction.getY());
-    }
-
-    private static boolean newCordsInMazeAlgorithmAreInsideMaze(Cords newCords){
-        return newCords.getX() >= 0 && newCords.getX() < GameService.MAP_WIDTH && newCords.getY() >= 0 && newCords.getY() < GameService.MAP_HEIGHT;
-    }
-
-    private static boolean newCordsInMazeAlgorithmAreNotInWall(Cords newCords){
-        return Game.getMapRepresentation().get(newCords.getY()).get(newCords.getX()) != '#';
-    }
 
     private static List<Cords> initPossibleDirectionsList() {
         List<Cords> directions = new ArrayList<>();
@@ -131,10 +126,6 @@ public class Beast extends MovingElement implements Runnable{
         directions.add(new Cords(1, 0));
         directions.add(new Cords(-1, 0));
         return directions;
-    }
-
-    private static boolean reachedDestination(Cords destination, Cords currentConsideredPoint) {
-        return currentConsideredPoint.getX() == destination.getX() && currentConsideredPoint.getY() == destination.getY();
     }
 
     private void addBeastToMap() {

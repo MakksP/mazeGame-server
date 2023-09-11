@@ -1,11 +1,10 @@
 package com.mgs.mazeGameserver;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BeastVisibleArea {
+    public static final int FIRST_CORDS_INDEX = 0;
+
     public static final Map<Cords, List<Cords>> invisibleFieldsInRelationToTheWalls = new HashMap<Cords, List<Cords>>() {{
         put(new Cords(0, -1), List.of(new Cords(-2, -3), new Cords(-1, -3), new Cords(0, -3), new Cords(1, -3), new Cords(2, -3), new Cords(-1, -2), new Cords(0, -2), new Cords(1, -2)));
         put(new Cords(0, -2), List.of(new Cords(-1, -3), new Cords(0, -3), new Cords(1, -3)));
@@ -110,4 +109,65 @@ public class BeastVisibleArea {
     private static boolean elementIsWall(VisibleAreaMapPoint currentElement) {
         return currentElement.getElement() == '#';
     }
+
+    private static boolean visitedPointsListHaveSpecificPoint(List<Cords> visitedPoints, Cords cords){
+        for (Cords visitedPoint : visitedPoints){
+            if (cords.cordsAreEqual(visitedPoint)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Cords getNewCordsInMazeAlgorithm(Cords currentConsideredPoint, Cords direction) {
+        return new Cords(currentConsideredPoint.getX() + direction.getX(), currentConsideredPoint.getY() + direction.getY());
+    }
+
+    private static boolean newCordsInMazeAlgorithmAreInsideMaze(Cords newCords){
+        return newCords.getX() >= 0 && newCords.getX() < GameService.MAP_WIDTH && newCords.getY() >= 0 && newCords.getY() < GameService.MAP_HEIGHT;
+    }
+
+    private static boolean newCordsInMazeAlgorithmAreNotInWall(Cords newCords){
+        return Game.getMapRepresentation().get(newCords.getY()).get(newCords.getX()) != '#';
+    }
+
+    private static boolean reachedDestination(Cords destination, Cords currentConsideredPoint) {
+        return currentConsideredPoint.getX() == destination.getX() && currentConsideredPoint.getY() == destination.getY();
+    }
+
+    public static boolean searchMazeForPaths(Cords beastStartCords, Cords destination, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
+        pointsQueue.add(new Cords(beastStartCords.getX(), beastStartCords.getY()));
+        while (!pointsQueue.isEmpty()){
+            Cords currentConsideredPoint = pointsQueue.poll();
+            for (Cords direction : directions){
+                Cords newCords = getNewCordsInMazeAlgorithm(currentConsideredPoint, direction);
+                if (newCordsInMazeAlgorithmAreInsideMaze(newCords) && newCordsInMazeAlgorithmAreNotInWall(newCords) && !visitedPointsListHaveSpecificPoint(visitedPoints, newCords)){
+                    pointsQueue.add(new Cords(newCords.getX(), newCords.getY()));
+                    visitedPoints.add(newCords);
+
+                    if (reachedDestination(destination, newCords)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static List<Cords> getBeastMovePath(List<Cords> visitedPoints) {
+        Collections.reverse(visitedPoints);
+        List<Cords> finalBeastPath = new ArrayList<>();
+        Cords startCords = visitedPoints.get(FIRST_CORDS_INDEX);
+        finalBeastPath.add(startCords);
+        for (int visitedPointsIndex = 1; visitedPointsIndex < visitedPoints.size(); visitedPointsIndex++){
+            Cords nextPoint = visitedPoints.get(visitedPointsIndex);
+            if (startCords.pointsAreSideBySide(nextPoint)){
+                finalBeastPath.add(nextPoint);
+                startCords = nextPoint;
+            }
+        }
+        Collections.reverse(finalBeastPath);
+        return finalBeastPath;
+    }
 }
+
