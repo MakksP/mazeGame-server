@@ -150,8 +150,12 @@ public class GameService {
         }
     }
 
-    private static char convertIntPlayerNumberToChar(Player attackedPlayer) {
+    public static char convertIntPlayerNumberToChar(Player attackedPlayer) {
         return (char) ((char) attackedPlayer.getNumber() + '0');
+    }
+
+    public static int convertCharToInt(char number) {
+        return number - '0';
     }
 
     public static void servePlayerDeath(Player attackedPlayer) {

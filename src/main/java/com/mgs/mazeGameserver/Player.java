@@ -64,14 +64,27 @@ public class Player extends MovingElement{
         } else if (direction == MoveDirection.LEFT){
             moveElementLeft();
         }
-        if (playerEnteredIntoBeast()){
+        if (playerEnteredIntoBeast() || playerEnteredIntoOtherPlayer()){
             GameService.servePlayerDeath(this);
-            makePlayerStandOnAsEmpty();
+            if (playerEnteredIntoOtherPlayer()){
+                serveOtherPlayerDeath();
+            }
+            makePlayerStandOnAsEmpty(this);
         }
     }
 
-    private void makePlayerStandOnAsEmpty() {
-        this.standsOn = ' ';
+    private void serveOtherPlayerDeath() {
+        Player otherPlayer = getPlayerById(GameService.convertCharToInt(this.standsOn));
+        GameService.servePlayerDeath(otherPlayer);
+        makePlayerStandOnAsEmpty(otherPlayer);
+    }
+
+    private boolean playerEnteredIntoOtherPlayer() {
+        return Game.elementIsPlayer(this.standsOn);
+    }
+
+    private void makePlayerStandOnAsEmpty(Player player) {
+        player.standsOn = ' ';
     }
 
     private boolean playerEnteredIntoBeast() {

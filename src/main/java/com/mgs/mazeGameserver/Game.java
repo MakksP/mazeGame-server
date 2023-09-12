@@ -144,4 +144,8 @@ public class Game {
         return objectsValue;
     }
 
+    public static boolean elementIsPlayer(char element) {
+        return Character.isDigit(element);
+    }
+
 }

@@ -91,12 +91,13 @@ public class Beast extends MovingElement implements Runnable{
 
     private char playerIdSeenByBeast(List<VisibleAreaMapPoint> beastView) {
         for (VisibleAreaMapPoint beastViewPoint : beastView){
-            if (Character.isDigit(beastViewPoint.getElement())){
+            if (Game.elementIsPlayer(beastViewPoint.getElement())){
                 return beastViewPoint.getElement();
             }
         }
         return '0';
     }
+
 
     private List<VisibleAreaMapPoint> getBeastView() {
         List<List<VisibleAreaMapPoint>> beastVisibleArea = GameService.getVisibleAreaByCords(cords);
