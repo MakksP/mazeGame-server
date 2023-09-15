@@ -73,6 +73,14 @@ public class Player extends MovingElement{
         }
     }
 
+    public int getPoints(){
+        return points;
+    }
+
+    public void setPoints(int value){
+        points = value;
+    }
+
     private void serveOtherPlayerDeath() {
         Player otherPlayer = getPlayerById(GameService.convertCharToInt(this.standsOn));
         GameService.servePlayerDeath(otherPlayer);

@@ -13,11 +13,13 @@ public class Game {
     private static List<List<Character>> mapRepresentation;
     private static Game gameMap;
     private static List<Player> playerList;
+    private static List<DroppedCoin> droppedCoins;
     private static Map<Character, Integer> objectsValue;
 
     private Game(){
         mapRepresentation = new ArrayList<>();
         playerList = new ArrayList<>();
+        droppedCoins = new ArrayList<>();
         objectsValue = new HashMap<>();
         objectsValue.put('c', COIN_VALUE);
         objectsValue.put('t', SMALL_TREASURE_VALUE);
@@ -148,4 +150,7 @@ public class Game {
         return Character.isDigit(element);
     }
 
+    public static List<DroppedCoin> getDroppedCoins() {
+        return droppedCoins;
+    }
 }

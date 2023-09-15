@@ -9,6 +9,7 @@ import java.util.List;
 public class GameService {
     public static final int VISIBILITY_LENGHT = 3;
     public static final int MAX_X_Y_IN_AREA = 3;
+    public static final int BASIC_AMOUNT_OF_POINTS = 0;
     public static int MAP_HEIGHT = 35;
     public static final int MAX_MAP_HEIGHT_AS_INDEX = MAP_HEIGHT - 1;
     public static int MAP_WIDTH = 49;
@@ -144,10 +145,24 @@ public class GameService {
     }
 
     public static void addPointsToPlayerIfStandOnValuableField(Player player) {
-        if (player.standsOn == 'c' || player.standsOn == 't' || player.standsOn == 'T'){
+        if (playerFoundValuableItem(player)){
             player.points += Game.getObjectsValue().get(player.standsOn);
             player.standsOn = ' ';
+        } else if (playerFoundDroppedCoins(player)){
+            DroppedCoin foundDroppedCoins = findDroppedCoinByCords(player.getPlayerCords());
+            player.points += foundDroppedCoins.getValue();
+            Game.getDroppedCoins().remove(foundDroppedCoins);
+            Game.getMapRepresentation().get(player.getPlayerCords().getY()).set(player.getPlayerCords().getX(), ' ');
+            player.standsOn = ' ';
         }
+    }
+
+    private static boolean playerFoundDroppedCoins(Player player) {
+        return player.standsOn == 'D';
+    }
+
+    private static boolean playerFoundValuableItem(Player player) {
+        return player.standsOn == 'c' || player.standsOn == 't' || player.standsOn == 'T';
     }
 
     public static char convertIntPlayerNumberToChar(Player attackedPlayer) {
@@ -159,10 +174,30 @@ public class GameService {
     }
 
     public static void servePlayerDeath(Player attackedPlayer) {
-        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), attackedPlayer.standsOn);
+        Cords attackedPlayerCords = attackedPlayer.getPlayerCords();
+        if (playerDoesNotCarryPoints(attackedPlayer)){
+            Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), attackedPlayer.standsOn);
+        } else {
+            Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), 'D');
+            Game.getDroppedCoins().add(new DroppedCoin(new Cords(attackedPlayerCords.getX(), attackedPlayerCords.getY()), attackedPlayer.getPoints()));
+            attackedPlayer.setPoints(BASIC_AMOUNT_OF_POINTS);
+        }
         attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
-        Game.getMapRepresentation().get(attackedPlayer.getPlayerCords().getY()).set(attackedPlayer.getPlayerCords().getX(), convertIntPlayerNumberToChar(attackedPlayer));
+        Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), convertIntPlayerNumberToChar(attackedPlayer));
         attackedPlayer.deaths++;
+    }
+
+    private static boolean playerDoesNotCarryPoints(Player attackedPlayer) {
+        return attackedPlayer.getPoints() == 0;
+    }
+
+    private static DroppedCoin findDroppedCoinByCords(Cords cords){
+        for (DroppedCoin droppedCoin : Game.getDroppedCoins()){
+            if (droppedCoin.getCords().cordsAreEqual(cords)){
+                return droppedCoin;
+            }
+        }
+        return null;
     }
 
 }

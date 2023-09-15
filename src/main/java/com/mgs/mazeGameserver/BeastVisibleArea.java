@@ -157,6 +157,9 @@ public class BeastVisibleArea {
     public static List<Cords> getBeastMovePath(List<Cords> visitedPoints) {
         Collections.reverse(visitedPoints);
         List<Cords> finalBeastPath = new ArrayList<>();
+        if (thereIsNoPath(visitedPoints)){
+            return null;
+        }
         Cords startCords = visitedPoints.get(FIRST_CORDS_INDEX);
         finalBeastPath.add(startCords);
         for (int visitedPointsIndex = 1; visitedPointsIndex < visitedPoints.size(); visitedPointsIndex++){
@@ -168,6 +171,10 @@ public class BeastVisibleArea {
         }
         Collections.reverse(finalBeastPath);
         return finalBeastPath;
+    }
+
+    private static boolean thereIsNoPath(List<Cords> visitedPoints) {
+        return visitedPoints.size() == 0;
     }
 }
 

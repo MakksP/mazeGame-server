@@ -61,7 +61,11 @@ public class Beast extends MovingElement implements Runnable{
 
     private void serveBeastAttack(Player attackedPlayer, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
         List<Cords> beastMovePath;
-        BeastVisibleArea.searchMazeForPaths(this.cords, attackedPlayer.getPlayerCords(), pointsQueue, visitedPoints, directions);
+        try {
+            BeastVisibleArea.searchMazeForPaths(this.cords, attackedPlayer.getPlayerCords(), pointsQueue, visitedPoints, directions);
+        } catch (Exception e){
+            System.out.println("dupa");
+        }
         beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
         for (Cords attackPoint : beastMovePath){
             try {
@@ -73,13 +77,12 @@ public class Beast extends MovingElement implements Runnable{
             clearBeastFromMap();
             setNewLocation(attackPoint);
             if (attackPoint.cordsAreEqual(attackedPlayer.getPlayerCords())){
-                TurnSystem.turnLock.unlock();
                 GameService.servePlayerDeath(attackedPlayer);
                 addBeastToMap();
+                TurnSystem.turnLock.unlock();
                 break;
             }
             addBeastToMap();
-
             TurnSystem.turnLock.unlock();
         }
     }
