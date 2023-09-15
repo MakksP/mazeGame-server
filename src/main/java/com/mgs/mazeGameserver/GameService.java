@@ -178,8 +178,13 @@ public class GameService {
         if (playerDoesNotCarryPoints(attackedPlayer)){
             Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), attackedPlayer.standsOn);
         } else {
-            Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), 'D');
-            Game.getDroppedCoins().add(new DroppedCoin(new Cords(attackedPlayerCords.getX(), attackedPlayerCords.getY()), attackedPlayer.getPoints()));
+            DroppedCoin droppedCoinInPlayersLocation = findDroppedCoinByCords(attackedPlayerCords);
+            if (droppedCoinInPlayersLocation != null){
+                droppedCoinInPlayersLocation.setValue(droppedCoinInPlayersLocation.getValue() + attackedPlayer.getPoints());
+            } else {
+                Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), 'D');
+                Game.getDroppedCoins().add(new DroppedCoin(new Cords(attackedPlayerCords.getX(), attackedPlayerCords.getY()), attackedPlayer.getPoints()));
+            }
             attackedPlayer.setPoints(BASIC_AMOUNT_OF_POINTS);
         }
         attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
