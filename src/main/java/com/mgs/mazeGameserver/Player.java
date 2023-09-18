@@ -70,7 +70,18 @@ public class Player extends MovingElement{
                 serveOtherPlayerDeath();
             }
             makePlayerStandOnAsEmpty(this);
+        } else if (playerEnteredIntoCampsite()){
+            servePlayerEnterToCampsite();
         }
+    }
+
+    private void servePlayerEnterToCampsite() {
+        this.storedPoints += this.points;
+        this.points = 0;
+    }
+
+    private boolean playerEnteredIntoCampsite() {
+        return this.standsOn == 'A';
     }
 
     public int getPoints(){

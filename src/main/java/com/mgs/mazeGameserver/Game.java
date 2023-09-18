@@ -10,6 +10,7 @@ public class Game {
     public static final int COINS_IN_MAZE = 25;
     public static final int SMALL_TREASURES_IN_MAZE = 15;
     public static final int BIG_TREASURES_IN_MAZE = 5;
+    public static final int CAMPSITES_IN_MAZE = 1;
     private static List<List<Character>> mapRepresentation;
     private static Game gameMap;
     private static List<Player> playerList;
@@ -25,9 +26,21 @@ public class Game {
         objectsValue.put('t', SMALL_TREASURE_VALUE);
         objectsValue.put('T', BIG_TREASURE_VALUE);
         generateMaze();
-        addCoinsToMaze();
-        addSmallTreasuresToMaze();
-        addBigTreasuresToMaze();
+        addStaticElementsToMaze();
+    }
+
+    private static void addStaticElementsToMaze() {
+        addElementToMaze(COINS_IN_MAZE, 'c');
+        addElementToMaze(SMALL_TREASURES_IN_MAZE, 't');
+        addElementToMaze(BIG_TREASURES_IN_MAZE, 'T');
+        addElementToMaze(CAMPSITES_IN_MAZE, 'A');
+    }
+
+    private static void addElementToMaze(int count, char symbol) {
+        for (int elementCounter = 0; elementCounter < count; elementCounter++) {
+            Cords coinCords = GameService.getRandomCords();
+            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), symbol);
+        }
     }
 
     private static void generateMaze() {
@@ -41,27 +54,6 @@ public class Game {
             } else {
                 mapRepresentation.get(mapRepresentationRowCounter).add(currentElement);
             }
-        }
-    }
-
-    private static void addCoinsToMaze(){
-        for (int coinsCounter = 0; coinsCounter < COINS_IN_MAZE; coinsCounter++) {
-            Cords coinCords = GameService.getRandomCords();
-            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), 'c');
-        }
-    }
-
-    private static void addSmallTreasuresToMaze(){
-        for (int coinsCounter = 0; coinsCounter < SMALL_TREASURES_IN_MAZE; coinsCounter++) {
-            Cords coinCords = GameService.getRandomCords();
-            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), 't');
-        }
-    }
-
-    private static void addBigTreasuresToMaze(){
-        for (int coinsCounter = 0; coinsCounter < BIG_TREASURES_IN_MAZE; coinsCounter++) {
-            Cords coinCords = GameService.getRandomCords();
-            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), 'T');
         }
     }
 
