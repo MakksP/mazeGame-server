@@ -25,7 +25,7 @@ public class Beast extends MovingElement implements Runnable{
             beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
 
 
-            for (Cords movePoint : beastMovePath){
+            /*for (Cords movePoint : beastMovePath){
                 try {
                     Thread.sleep(BEAST_SLOW_DOWN_TIME_MS);
                 } catch (InterruptedException e) {
@@ -49,7 +49,7 @@ public class Beast extends MovingElement implements Runnable{
                     break;
                 }
                 TurnSystem.turnLock.unlock();
-            }
+            }*/
         }
     }
 
@@ -61,11 +61,7 @@ public class Beast extends MovingElement implements Runnable{
 
     private void serveBeastAttack(Player attackedPlayer, Queue<Cords> pointsQueue, List<Cords> visitedPoints, List<Cords> directions) {
         List<Cords> beastMovePath;
-        try {
-            BeastVisibleArea.searchMazeForPaths(this.cords, attackedPlayer.getPlayerCords(), pointsQueue, visitedPoints, directions);
-        } catch (Exception e){
-            System.out.println("dupa");
-        }
+        BeastVisibleArea.searchMazeForPaths(this.cords, attackedPlayer.getPlayerCords(), pointsQueue, visitedPoints, directions);
         beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
         for (Cords attackPoint : beastMovePath){
             try {

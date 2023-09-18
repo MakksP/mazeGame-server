@@ -176,7 +176,9 @@ public class GameService {
     public static void servePlayerDeath(Player attackedPlayer) {
         Cords attackedPlayerCords = attackedPlayer.getPlayerCords();
         if (playerDoesNotCarryPoints(attackedPlayer)){
-            Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), attackedPlayer.standsOn);
+            if (playerIsNotStandingOnDroppedCoins(attackedPlayerCords)){
+                Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), attackedPlayer.standsOn);
+            }
         } else {
             DroppedCoin droppedCoinInPlayersLocation = findDroppedCoinByCords(attackedPlayerCords);
             if (droppedCoinInPlayersLocation != null){
@@ -190,6 +192,10 @@ public class GameService {
         attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
         Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), convertIntPlayerNumberToChar(attackedPlayer));
         attackedPlayer.deaths++;
+    }
+
+    private static boolean playerIsNotStandingOnDroppedCoins(Cords attackedPlayerCords) {
+        return Game.getMapRepresentation().get(attackedPlayerCords.getY()).get(attackedPlayerCords.getX()) != 'D';
     }
 
     private static boolean playerDoesNotCarryPoints(Player attackedPlayer) {
