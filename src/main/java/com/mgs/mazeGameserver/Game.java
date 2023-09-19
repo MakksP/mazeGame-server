@@ -16,6 +16,7 @@ public class Game {
     private static List<Player> playerList;
     private static List<DroppedCoin> droppedCoins;
     private static Map<Character, Integer> objectsValue;
+    private static Cords campsiteLocation;
 
     private Game(){
         mapRepresentation = new ArrayList<>();
@@ -33,14 +34,16 @@ public class Game {
         addElementToMaze(COINS_IN_MAZE, 'c');
         addElementToMaze(SMALL_TREASURES_IN_MAZE, 't');
         addElementToMaze(BIG_TREASURES_IN_MAZE, 'T');
-        addElementToMaze(CAMPSITES_IN_MAZE, 'A');
+        campsiteLocation = addElementToMaze(CAMPSITES_IN_MAZE, 'A');
     }
 
-    private static void addElementToMaze(int count, char symbol) {
+    private static Cords addElementToMaze(int count, char symbol) {
+        Cords elementCords = null;
         for (int elementCounter = 0; elementCounter < count; elementCounter++) {
-            Cords coinCords = GameService.getRandomCords();
-            mapRepresentation.get(coinCords.getY()).set(coinCords.getX(), symbol);
+            elementCords = GameService.getRandomCords();
+            mapRepresentation.get(elementCords.getY()).set(elementCords.getX(), symbol);
         }
+        return elementCords;
     }
 
     private static void generateMaze() {
@@ -144,5 +147,9 @@ public class Game {
 
     public static List<DroppedCoin> getDroppedCoins() {
         return droppedCoins;
+    }
+
+    public static Cords getCampsiteLocation() {
+        return campsiteLocation;
     }
 }

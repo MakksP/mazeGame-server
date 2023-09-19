@@ -15,13 +15,13 @@ public class GameController {
     private static final ReentrantLock joinLock = new ReentrantLock();
 
     @PostMapping("/joinGame/{name}")
-    public static int joinGame(@PathVariable String name){
+    public static JoinInfo joinGame(@PathVariable String name){
         joinLock.lock();
         Player connectingPlayer = new Player(GameService.getRandomCords(), Game.getFirstFreePlayerNumber(), name);
         Game.getPlayerList().add(connectingPlayer);
         Player.addPlayerToMap(connectingPlayer);
         joinLock.unlock();
-        return connectingPlayer.getNumber();
+        return new JoinInfo(Game.getCampsiteLocation(), connectingPlayer.getNumber());
     }
 
     @PostMapping("/leaveGame/{playerNumber}")
@@ -33,10 +33,7 @@ public class GameController {
 
     @GetMapping("/getVisibleArea/{playerNumber}")
     public static GameInfoPacket getVisibleArea(@PathVariable int playerNumber){
-        //return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
-        List<List<VisibleAreaMapPoint>> map = new ArrayList<>();
-        GameService.createWholeMapArea(Game.getMapRepresentation(), map);
-        return new GameInfoPacket(map, Game.getPlayerList());
+        return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
     }
 
     @PostMapping("/move/up/{playerNumber}")

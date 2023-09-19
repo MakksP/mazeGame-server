@@ -1,5 +1,7 @@
 package com.mgs.mazeGameserver;
 
+import java.util.List;
+
 public class Player extends MovingElement{
     public Cords spawnPoint;
     public int points;
@@ -7,6 +9,7 @@ public class Player extends MovingElement{
     public int number;
     public int deaths;
     public String name;
+    public boolean knowCampsiteLocation;
     
     public Player(Cords cords, int playerNumber, String nick){
         this.cords = cords;
@@ -17,6 +20,7 @@ public class Player extends MovingElement{
         deaths = 0;
         name = nick;
         standsOn = ' ';
+        knowCampsiteLocation = false;
     }
 
     public Player(){
@@ -64,6 +68,11 @@ public class Player extends MovingElement{
         } else if (direction == MoveDirection.LEFT){
             moveElementLeft();
         }
+        if (!this.knowCampsiteLocation){
+            if (playerSeeCampsite()){
+                this.knowCampsiteLocation = true;
+            }
+        }
         if (playerEnteredIntoBeast() || playerEnteredIntoOtherPlayer()){
             GameService.servePlayerDeath(this);
             if (playerEnteredIntoOtherPlayer()){
@@ -82,6 +91,18 @@ public class Player extends MovingElement{
 
     private boolean playerEnteredIntoCampsite() {
         return this.standsOn == 'A';
+    }
+
+    private boolean playerSeeCampsite(){
+        List<List<VisibleAreaMapPoint>> visibleArea = GameService.getVisibleAreaByCords(this.getPlayerCords());
+        for (List<VisibleAreaMapPoint> visibleAreaRow : visibleArea){
+            for (VisibleAreaMapPoint singleElement : visibleAreaRow){
+                if (singleElement.getElement() == 'A'){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public int getPoints(){
