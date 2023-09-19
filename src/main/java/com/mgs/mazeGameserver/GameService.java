@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public class GameService {
-    public static final int VISIBILITY_LENGHT = 3;
+    public static final int VISIBILITY_LENGTH = 3;
     public static final int MAX_X_Y_IN_AREA = 3;
     public static final int BASIC_AMOUNT_OF_POINTS = 0;
     public static int MAP_HEIGHT = 35;
@@ -92,7 +92,7 @@ public class GameService {
     }
 
     private static int getFirstYOfVisibleArea(int elementYCord) {
-        int currentYMapPosition = elementYCord - VISIBILITY_LENGHT;
+        int currentYMapPosition = elementYCord - VISIBILITY_LENGTH;
         if (currentYMapPosition < 0) {
             currentYMapPosition = 0;
         }
@@ -100,7 +100,7 @@ public class GameService {
     }
 
     private static int getFirstXOfVisibleArea(int elementXCord) {
-        int currentXMapPosition = elementXCord - VISIBILITY_LENGHT;
+        int currentXMapPosition = elementXCord - VISIBILITY_LENGTH;
         if (currentXMapPosition < 0) {
             currentXMapPosition = 0;
         }

@@ -25,7 +25,7 @@ public class Beast extends MovingElement implements Runnable{
             beastMovePath = BeastVisibleArea.getBeastMovePath(visitedPoints);
 
 
-            /*for (Cords movePoint : beastMovePath){
+            for (Cords movePoint : beastMovePath){
                 try {
                     Thread.sleep(BEAST_SLOW_DOWN_TIME_MS);
                 } catch (InterruptedException e) {
@@ -49,7 +49,7 @@ public class Beast extends MovingElement implements Runnable{
                     break;
                 }
                 TurnSystem.turnLock.unlock();
-            }*/
+            }
         }
     }
 
