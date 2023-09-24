@@ -32,4 +32,8 @@ public class MovingElement {
         this.cords.setX(newCords.getX());
         this.cords.setY(newCords.getY());
     }
+
+    public char getStandsOn(){
+        return standsOn;
+    }
 }

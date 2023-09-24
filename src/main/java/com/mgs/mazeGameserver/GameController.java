@@ -35,10 +35,9 @@ public class GameController {
     }
 
 
-    @GetMapping("/getVisibleArea/{playerNumber}")
+    @GetMapping("/getGameData/{playerNumber}")
     public static GameInfoPacket getVisibleArea(@PathVariable int playerNumber){
-        //return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
-        return new GameInfoPacket(GameService.createWholeMapArea(Game.getMapRepresentation()), Game.getPlayerList());
+        return new GameInfoPacket(GameService.getVisibleAreaByPlayerId(playerNumber), Game.getPlayerList());
     }
 
     @PostMapping("/move/up/{playerNumber}")
