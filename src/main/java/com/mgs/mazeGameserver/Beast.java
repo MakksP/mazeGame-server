@@ -36,6 +36,7 @@ public class Beast extends MovingElement implements Runnable{
                 Player attackedPlayer;
                 if (beastSeePlayer(playerId)){
                     attackedPlayer = Player.getPlayerById(Integer.parseInt(String.valueOf(playerId)));
+                    assert attackedPlayer != null;
                     if (attackedPlayer.standsOn != 'S'){
                         actionAfterPlayerDetection(pointsQueue, visitedPoints, directions, attackedPlayer);
                         break;

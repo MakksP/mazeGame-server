@@ -29,6 +29,7 @@ public class GameController {
         joinLock.lock();
         Player leavingPlayer = Player.getPlayerById(playerNumber);
         GameService.deletePlayerSafeZone(leavingPlayer);
+
         Player.deletePlayerById(playerNumber);
         joinLock.unlock();
     }

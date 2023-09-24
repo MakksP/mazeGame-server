@@ -51,7 +51,9 @@ public class Player extends MovingElement{
     public static void deletePlayerById(int playerId){
         Player playerToRemove = Player.getPlayerById(playerId);
         Game.getPlayerList().remove(playerToRemove);
-        Player.clearPlayerFromMap(playerToRemove);
+        if (!playerIsStandingOnSpawnPoint(playerToRemove)){
+            Player.clearPlayerFromMap(playerToRemove);
+        }
     }
     public static void addPlayerToMap(Player player) {
         GameService.addPointsToPlayerIfStandOnValuableField(player);
@@ -125,6 +127,10 @@ public class Player extends MovingElement{
 
     private void makePlayerStandOnAsEmpty(Player player) {
         player.standsOn = ' ';
+    }
+
+    private static boolean playerIsStandingOnSpawnPoint(Player player){
+        return player.getPlayerCords().cordsAreEqual(player.spawnPoint);
     }
 
     private boolean playerEnteredIntoBeast() {
