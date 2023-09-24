@@ -19,7 +19,7 @@ public class Player extends MovingElement{
         number = playerNumber;
         deaths = 0;
         name = nick;
-        standsOn = ' ';
+        standsOn = 'S';
         knowCampsiteLocation = false;
     }
 

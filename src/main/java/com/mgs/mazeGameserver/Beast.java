@@ -33,11 +33,13 @@ public class Beast extends MovingElement implements Runnable{
                 }
                 List<VisibleAreaMapPoint> beastView = getBeastView();
                 char playerId = playerIdSeenByBeast(beastView);
-
+                Player attackedPlayer;
                 if (beastSeePlayer(playerId)){
-                    Player attackedPlayer = Player.getPlayerById(Integer.parseInt(String.valueOf(playerId)));
-                    actionAfterPlayerDetection(pointsQueue, visitedPoints, directions, attackedPlayer);
-                    break;
+                    attackedPlayer = Player.getPlayerById(Integer.parseInt(String.valueOf(playerId)));
+                    if (attackedPlayer.standsOn != 'S'){
+                        actionAfterPlayerDetection(pointsQueue, visitedPoints, directions, attackedPlayer);
+                        break;
+                    }
                 }
 
                 TurnSystem.turnLock.lock();

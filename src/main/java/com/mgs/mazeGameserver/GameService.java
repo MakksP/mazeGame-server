@@ -62,13 +62,15 @@ public class GameService {
         }
     }
 
-    public static void createWholeMapArea(List<List<Character>> wholeMapRepresentation, List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation){
+    public static List<List<VisibleAreaMapPoint>> createWholeMapArea(List<List<Character>> wholeMapRepresentation){
+        List<List<VisibleAreaMapPoint>> mapVisibleAreaRepresentation = new ArrayList<>();
         for (int rowIndex = 0; rowIndex < MAP_HEIGHT; rowIndex++) {
             mapVisibleAreaRepresentation.add(new ArrayList<>());
             for (int columnIndex = 0; columnIndex < MAP_WIDTH; columnIndex++) {
                 mapVisibleAreaRepresentation.get(rowIndex).add(getCurrentMapElement(wholeMapRepresentation, rowIndex, columnIndex));
             }
         }
+        return mapVisibleAreaRepresentation;
     }
 
     private static VisibleAreaMapPoint getCurrentMapElement(List<List<Character>> wholeMapRepresentation, int yMapPosition, int xMapPosition) {
@@ -191,6 +193,7 @@ public class GameService {
         }
         attackedPlayer.setNewLocation(new Cords(attackedPlayer.spawnPoint.getX(), attackedPlayer.spawnPoint.getY()));
         Game.getMapRepresentation().get(attackedPlayerCords.getY()).set(attackedPlayerCords.getX(), convertIntPlayerNumberToChar(attackedPlayer));
+        attackedPlayer.standsOn = 'S';
         attackedPlayer.deaths++;
     }
 
