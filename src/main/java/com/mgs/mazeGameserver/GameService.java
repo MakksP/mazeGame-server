@@ -214,4 +214,8 @@ public class GameService {
         return null;
     }
 
+    public static void deletePlayerSafeZone(Player leavingPlayer) {
+        Game.getMapRepresentation().get(leavingPlayer.spawnPoint.getY()).set(leavingPlayer.spawnPoint.getX(), ' ');
+    }
+
 }

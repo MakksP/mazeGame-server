@@ -27,9 +27,12 @@ public class GameController {
     @PostMapping("/leaveGame/{playerNumber}")
     public static void leaveGame(@PathVariable int playerNumber){
         joinLock.lock();
+        Player leavingPlayer = Player.getPlayerById(playerNumber);
+        GameService.deletePlayerSafeZone(leavingPlayer);
         Player.deletePlayerById(playerNumber);
         joinLock.unlock();
     }
+
 
     @GetMapping("/getVisibleArea/{playerNumber}")
     public static GameInfoPacket getVisibleArea(@PathVariable int playerNumber){
